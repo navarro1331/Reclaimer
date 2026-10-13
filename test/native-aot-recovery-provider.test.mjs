@@ -1,0 +1,27 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { digest } from '../lib/artifact-binary.mjs';
+import { recoverNativeAotDetailed, projectNativeAotRecovery } from '../lib/native-aot.mjs';
+import { buildOwnedAotRecovery, recoveryPeModel } from './native-aot-recovery-build.mjs';
+import { Context } from '../lib/core.mjs';
+import { handlers } from '../lib/native.mjs';
+
+test('actual owned NativeAOT compiler specimen recovers literal, array and boxed value without target execution',{
+  skip:process.env.REAL_RUN_NATIVE_VARIATIONS!=='1',timeout:180000,
+},async t=>{
+  const receipt=await buildOwnedAotRecovery({signal:t.signal});assert.equal(receipt.success,true);assert.equal(receipt.cleanup.complete,true);assert.equal(receipt.target_execution,'not-performed');assert.equal(receipt.source_preserved,true);
+  const bytes=await fs.readFile(receipt.retained_target),before=digest(bytes);assert.equal(before,receipt.artifact_sha256);for(const source of receipt.sources)assert.equal(digest(await fs.readFile(path.join(receipt.source_root,source.name))),source.sha256);
+  const {model,architecture}=recoveryPeModel(bytes),detail=recoverNativeAotDetailed(bytes,model,before,architecture,{signal:t.signal}),module=detail.modules.find(m=>m.instances.some(i=>i.string_value==='Reclaimer-owned-AOT α🚀'));
+  assert.ok(module);assert.equal(detail.pointer_size,8);assert.equal(module.format_major,9);assert.equal(module.format_minor,1);assert.ok(module.types.length>0);assert.ok(module.instances.length>0);assert.ok(module.reconstruction.bytes.length>0);
+  const string=module.instances.find(i=>i.address===receipt.assertions.owned_literal);assert.equal(string.string_value,'Reclaimer-owned-AOT α🚀');const stringType=module.types.find(type=>type.address===string.method_table_address);assert.equal(stringType.component_size_bytes,2);assert.equal(stringType.base_size_bytes,22);assert.ok(stringType.virtual_slots.length>0);assert.ok(stringType.virtual_slots.some(slot=>slot.target_address&&model.segments.some(s=>s.execute&&BigInt(slot.target_address)>=BigInt(s.start)&&BigInt(slot.target_address)<BigInt(s.end))));
+  const array=module.instances.find(i=>i.address===receipt.assertions.owned_array);assert.equal(array.component_count,7);const arrayAt=Number(BigInt(array.data_address)-module.reconstruction.address);assert.deepEqual(module.reconstruction.bytes.subarray(arrayAt,arrayAt+7),Buffer.from([1,2,3,5,8,13,21]));
+  const boxed=module.instances.find(i=>i.address===receipt.assertions.owned_boxed_int32);assert.equal(module.types.find(type=>type.address===boxed.method_table_address).element_type,'int32');assert.equal(module.reconstruction.bytes.readInt32LE(Number(BigInt(boxed.address)-module.reconstruction.address)+8),173);
+  assert.ok(module.types.every(type=>type.name_origin==='generated'&&type.original_name===null&&type.anchors.length>0));assert.equal(detail.records[0].method_tables,0);
+  const projected=projectNativeAotRecovery(detail,{typeAddresses:module.types.map(type=>type.address),instanceAddresses:module.instances.map(instance=>instance.address)})[0];assert.equal(projected.method_tables,module.types.length);assert.equal(projected.coverage.frozen_objects_annotated,module.instances.length);assert.equal(projected.analysis_artifact_sha256,before);
+  assert.equal(digest(await fs.readFile(receipt.retained_target)),before);assert.equal(digest(module.reconstruction.bytes),module.reconstruction.sha256);
+  const ctx=new Context({signal:t.signal,config:{nativeProvider:'custom'}});ctx.handlers=handlers;t.after(async()=>{if(ctx.target)await handlers.close_binary({},ctx);});await ctx.call('open_binary',{path:receipt.retained_target});const load=await ctx.call('inspect_native_load_image',{}),record=load.normalized_result.observations.metadata_recovery.find(record=>record.header_address===module.header_address);assert.equal(load.confidence,'derived');assert.equal(record.method_tables,module.types.length);assert.equal(record.coverage.frozen_objects_annotated,module.instances.length);assert.equal(ctx.nativeSession.nativeRecovery.types.size,module.types.length+module.instances.length);
+  const observedType=await ctx.call('inspect_native_data_type',{address:string.method_table_address});assert.equal(observedType.normalized_result.metadata_recovery.base_size_bytes,22);assert.equal(observedType.normalized_result.metadata_recovery.name_origin,'generated');const observedInstance=(await ctx.call('inspect_native_data_type',{address:string.address})).normalized_result;assert.ok(observedInstance.fields.some(field=>field.name==='utf16_data'));
+  const read=await ctx.call('read_bytes',{address:string.data_address,length:string.data_size_bytes});assert.equal(read.normalized_result.bytes_hex,Buffer.from('Reclaimer-owned-AOT α🚀','utf16le').toString('hex'));assert.equal(read.confidence,'derived');assert.equal(read.provider.id,'reclaimer-nativeaot-session');assert.equal(read.raw_result.returned_bytes_sha256,digest(Buffer.from('Reclaimer-owned-AOT α🚀','utf16le')));assert.equal(read.raw_result.derived_memory.sha256,module.reconstruction.sha256);assert.equal(load.subject.digest.sha256,before);assert.equal(digest(await fs.readFile(receipt.retained_target)),before);
+});

@@ -1,0 +1,2 @@
+# Preserve source, evidence and retained notice bytes across Windows checkouts.
+* -text

@@ -1,0 +1,15 @@
+{
+  "nativeProvider": "ghidra",
+  "javaHome": "C:/tools/jdk",
+  "ghidraArgv": [
+    "C:/tools/jdk/bin/java.exe",
+    "-Xmx1G",
+    "-Djava.system.class.loader=ghidra.GhidraClassLoader",
+    "-Djava.awt.headless=true",
+    "-Dfile.encoding=UTF8",
+    "-cp",
+    "C:/tools/ghidra/Ghidra/Framework/Utility/lib/Utility.jar",
+    "ghidra.GhidraLauncher",
+    "ghidra.app.util.headless.AnalyzeHeadless"
+  ]
+}

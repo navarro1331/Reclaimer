@@ -1,0 +1,22 @@
+import {runtimePowerShell} from './runtime-provider-prerequisites.mjs';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {context,root} from './runtime-owned-fixtures.mjs';
+test('owned custom UIA Toggle and SelectionItem controls produce actual state and filesystem effects',async t=>{
+ const powershell=await runtimePowerShell(t);if(!powershell)return;
+ const dir=await mkdtemp(join(root,'test/runtime-parity-uia-')),effects=join(dir,'effects.txt'),helper=fileURLToPath(new URL('./runtime-parity-uia-fixture.ps1',import.meta.url));let child,ended=false;
+ t.after(async()=>{if(child&&child.exitCode===null&&child.signalCode===null)child.kill();if(child&&child.exitCode===null&&child.signalCode===null){let timer;try{await Promise.race([new Promise(r=>child.once('exit',r)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Owned UI fixture physical exit was not confirmed')),30000);})]);}finally{clearTimeout(timer);}}ended=!child||child.exitCode!==null||child.signalCode!==null;if(ended)await rm(dir,{recursive:true,force:true});else t.diagnostic('Retained unconfirmed own UI fixture '+dir);});
+ child=spawn(powershell,['-NoLogo','-NoProfile','-STA','-File',helper,'-EffectPath',effects],{shell:false,windowsHide:true,env:{SystemRoot:process.env.SystemRoot??'C:\\Windows',TEMP:dir,TMP:dir},stdio:['ignore','pipe','pipe']});let text='',stderr='';child.stderr.on('data',d=>{stderr=(stderr+d).slice(0,65536);});
+ const identity=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Owned custom UI startup failed: '+stderr)),30000);child.stdout.on('data',d=>{text+=d;const m=text.match(/OWNED_FIXTURE:(\d+):(\d+)/);if(m){clearTimeout(timer);resolve({pid:Number(m[1]),window_id:Number(m[2])});}});child.once('error',e=>{clearTimeout(timer);reject(e);});child.once('exit',()=>{clearTimeout(timer);reject(new Error('Own UI exited during startup: '+stderr));});});
+ assert.equal(identity.pid,child.pid);const ctx=context(dir),request={...identity,accessibility:true,screenshot:false,max_nodes:100};const initial=(await ctx.call('observe_native_ui',request)).normalized_result.initial;t.diagnostic('Actual custom controls '+JSON.stringify(initial.nodes));assert.equal(initial.window.pid,child.pid);assert.equal(initial.window.window_id,identity.window_id);
+ const toggle=initial.nodes.find(n=>n.title==='Owned custom toggle');assert.ok(toggle);assert.equal(toggle.role,'ControlType.Custom');assert.equal(toggle.value,'Off');assert.ok(toggle.actions.includes('click'));
+ const first=(await ctx.call('capture_native_ui_scenario',{...request,steps:[{kind:'click',path:toggle.path}]})).normalized_result.steps[0];assert.equal(first.outcome,'completed',JSON.stringify(first));assert.equal(first.after.nodes.find(n=>n.title==='Owned custom toggle').value,'On');assert.ok(first.after.nodes.some(n=>n.title==='State:True'));assert.equal(await readFile(effects,'utf8'),'State:True');
+ const second=(await ctx.call('capture_native_ui_scenario',{...request,steps:[{kind:'click',path:toggle.path}]})).normalized_result.steps[0];assert.equal(second.outcome,'completed');assert.equal(second.after.nodes.find(n=>n.title==='Owned custom toggle').value,'Off');assert.equal(await readFile(effects,'utf8'),'State:False');
+ const choice=second.after.nodes.find(n=>n.title==='Choice B'&&n.role==='ControlType.ListItem');assert.ok(choice);assert.equal(choice.value,'not-selected');assert.ok(choice.actions.includes('click'));
+ const selected=(await ctx.call('capture_native_ui_scenario',{...request,steps:[{kind:'click',path:choice.path}]})).normalized_result.steps[0];assert.equal(selected.outcome,'completed',JSON.stringify(selected));assert.equal(selected.after.nodes.find(n=>n.title==='Choice B'&&n.role==='ControlType.ListItem').value,'selected');assert.ok(selected.after.nodes.some(n=>n.title==='Selection:Choice B'));assert.equal(await readFile(effects,'utf8'),'Selection:Choice B');
+ for(const snapshot of [first.before,first.after,second.before,second.after,selected.before,selected.after])assert.deepEqual(snapshot.window,initial.window);
+});

@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, writeFile, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { configure } from '../lib/setup.mjs';
+import { Context } from '../lib/core.mjs';
+import { parse } from 'smol-toml';
+test('setup preserves unrelated TOML and JSON entries, is idempotent, and uninstall respects later edits',async()=>{
+ const folder=await mkdtemp(join(tmpdir(),'real-setup-')),home=join(folder,'home'),root=join(folder,'project');await mkdir(join(root,'skills/real'),{recursive:true});await writeFile(join(root,'skills/real/SKILL.md'),'Independent fixture skill\n');
+ await mkdir(join(home,'.codex'),{recursive:true});await mkdir(join(home,'.cursor'),{recursive:true});
+ const codex=join(home,'.codex/config.toml'),cursor=join(home,'.cursor/mcp.json');
+ await writeFile(codex,'model = "synthetic"\n[mcp_servers.other]\ncommand = "fixture"\n');
+ await writeFile(cursor,JSON.stringify({mcpServers:{other:{command:'fixture'}}}));
+ const ctx=new Context(),env={root,home,platform:'win32'},opts={client:['codex','cursor'],skill:join(home,'skill'),yes:true};
+ const dry=await configure('setup',{...opts,dryRun:true},ctx,env);assert.equal(dry.status,'planned');assert.equal(parse(await readFile(codex,'utf8')).mcp_servers.real,undefined);
+ const first=await configure('setup',opts,ctx,env);assert.equal(first.clients.length,2);assert.equal(parse(await readFile(codex,'utf8')).model,'synthetic');
+ const repeat=await configure('setup',opts,ctx,env);assert.equal(repeat.clients[0].backup,first.clients[0].backup);
+ const current=JSON.parse(await readFile(cursor));current.mcpServers.real.args=['user-changed'];await writeFile(cursor,JSON.stringify(current));
+ const result=await configure('uninstall',{purgeData:false},ctx,env);assert.equal(result.status,'partially-uninstalled');assert.equal(result.preserved.length,1);
+ const restored=parse(await readFile(codex,'utf8'));assert.equal(restored.mcp_servers.real,undefined);assert.equal(restored.mcp_servers.other.command,'fixture');assert.deepEqual(JSON.parse(await readFile(cursor)).mcpServers.real.args,['user-changed']);
+});

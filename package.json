@@ -1,0 +1,50 @@
+{
+  "name": "reclaimer",
+  "version": "0.2.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "description": "Reclaimer: independent local artifact investigation with compatible CLI and MCP interfaces",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/navarro1331/Reclaimer.git"
+  },
+  "bin": {
+    "reclaimer": "scripts/reclaimer.mjs",
+    "real": "scripts/real.mjs"
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "reclaimer": "node scripts/reclaimer.mjs",
+    "start": "node scripts/real.mjs mcp",
+    "real": "node scripts/real.mjs",
+    "build": "node scripts/check.mjs",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "verify": "node scripts/verify.mjs"
+  },
+  "dependencies": {
+    "@babel/parser": "8.0.4",
+    "@electron/asar": "4.2.0",
+    "@jridgewell/trace-mapping": "0.3.31",
+    "@lydell/node-pty": "1.1.0",
+    "@xmldom/xmldom": "0.9.12",
+    "@xterm/addon-serialize": "0.14.0",
+    "@xterm/headless": "6.0.0",
+    "@zip.js/zip.js": "2.15.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "diff": "9.0.0",
+    "evmole": "0.9.3",
+    "incur": "0.6.1",
+    "playwright-core": "1.58.2",
+    "plist": "5.0.0",
+    "pngjs": "7.0.0",
+    "smol-toml": "1.9.1",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.3.1"
+  }
+}
