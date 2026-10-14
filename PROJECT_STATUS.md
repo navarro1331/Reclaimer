@@ -1,8 +1,9 @@
 # Reclaimer project status
 
 As of 2026-10-14, Reclaimer is an independently implemented local application,
-package version 0.2.0. The native snapshot restore transaction gap is fixed and
-passed complete strict verification with owned fixtures and actual MCP retry.
+package version 0.2.0. The evidence-bundle import transaction gap is fixed.
+Owned fixtures, actual CLI/MCP flows and complete strict verification support
+the documented failure, cancellation and retained-revision cases.
 Previous NativeAOT identity, Swift declaration and documentation proofs retain
 their recorded scope.
 The public branch history and fetched-remote receipt identify each published
@@ -21,7 +22,9 @@ revision.
 | Provider datatype response ownership | Four regressions fail before the fix and pass after it; combined focused checks 19/19 | Passed; [scope](docs/verification/PROVIDER_DATATYPE_ISOLATION.md) |
 | Previous provider-isolation strict run | 425/425 tests across 60 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Retained run 8ff7e3d6-3bb2-43c8-8e3b-6350eeaf4e74; 189 unchanged inputs |
 | Native snapshot restore transaction | 13/13 owned cases; combined focused checks 22/22; actual MCP failure preservation and valid retry | Passed; [scope](docs/verification/NATIVE_SNAPSHOT_TRANSACTION.md) |
-| Accepted current strict run | 438/438 tests across 61 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Passed; run 7d179bad-793c-4bbc-b66c-09d281313402; 191 unchanged inputs |
+| Previous snapshot-transaction strict run | 438/438 tests across 61 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Retained run 7d179bad-793c-4bbc-b66c-09d281313402; 191 unchanged inputs |
+| Evidence-bundle import transaction | 13/13 owned cases; combined focused checks 44/44; actual MCP fault/cancellation/retry and stock CLI import | Passed; [scope](docs/verification/EVIDENCE_IMPORT_TRANSACTION.md) |
+| Accepted current strict run | 451/451 tests across 62 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Passed; run 2b93c705-bd49-42f5-b30f-d251b968a7b1; 192 unchanged inputs |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build

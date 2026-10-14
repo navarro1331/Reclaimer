@@ -10,6 +10,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 | NativeAOT identity and Swift declaration extension | Implemented and strictly verified | Verify byte-bound names, generated aliases, additional mapped types, actual Swift declaration traits, atomic failure behavior and unchanged contracts. See [current status](PROJECT_STATUS.md). |
 | Cached provider datatype response isolation | Closed in owned fixture scope | Clone cached DTOs before address projection; prove name/ID/address caller mutation isolation and earlier-reply stability after cache updates. See [scope](docs/verification/PROVIDER_DATATYPE_ISOLATION.md). |
 | Native snapshot restore transaction | Closed in owned fixture scope | Stage validated annotations/evidence before state changes, reject conflicts and preserve failed/cancelled restores. Verify actual MCP retry. See [scope](docs/verification/NATIVE_SNAPSHOT_TRANSACTION.md). |
+| Evidence-bundle import transaction | Closed in owned fixture scope | Prepare unpublished historical bindings, recheck retained state after await and commit only after cancellation checks. Verify controlled Context races and actual transports. See [scope](docs/verification/EVIDENCE_IMPORT_TRANSACTION.md). |
 | Project documentation and decision records | Created and reviewed | Maintain the requested root documents, three ADRs, working links and evidence-backed status. |
 | Mac-only provider validation | Pending operator environment | Use owned artifacts on macOS with Hopper/Apple assetutil and the relevant Apple SDK/runtime. Record genuine provider output and platform limitations. |
 | Broader NativeAOT recovery | Open | Independently prove generic/parameterized associations, original instance layouts, optional/GC/dispatch structures and method code-target bindings before promoting them. |
@@ -39,6 +40,11 @@ recovery equivalence retain their separate pending scope.
 The native snapshot restore transaction gap is closed for the documented malformed
 input, evidence conflict and cancellation cases. Complete unknown-ledger transfer
 remains a separate evidence-bundle capability; this fix does not add it to snapshots.
+
+The bundle-import transaction gap is closed for the documented failure,
+cancellation and awaited-binding conflict cases. General operation transactions,
+resource/concurrency breadth and historical source authenticity remain separate
+scopes; the local Context race proof does not change MCP's serialized tool queue.
 
 Distribution licensing, packaged installation, hosted service operation and
 Mega worker/client activation each require their own defined scope. This roadmap

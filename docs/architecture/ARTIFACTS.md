@@ -41,6 +41,13 @@ identical records remain in place. Malformed input and late cancellation leave
 the prior context unchanged. Snapshots do not transfer the complete unknown ledger.
 See the [owned transaction scope](../verification/NATIVE_SNAPSHOT_TRANSACTION.md).
 
+The separate evidence-bundle importer stages records, unknown revisions and any
+historical integrity binding before committing. Retained-state checks are repeated
+after awaited binding preparation; failed/cancelled preparation preserves prior
+maps. The [owned import scope](../verification/EVIDENCE_IMPORT_TRANSACTION.md)
+records Context race and actual transport proof. Historical bindings preserve
+opaque identifiers without certifying their original source/history.
+
 Native byte and cached-provider reads recheck the physical source. Ordinary MCP
 sessions reject changed selected bytes. CLI analysis defaults to the same failure;
 explicit `record-and-continue` analyzes the retained opening byte view, preserves

@@ -72,7 +72,7 @@ test('failed later subprocess output is still subject to the shared quota',async
  await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['first','second']}),capacity('output_bytes'));assert.equal(f.calls.length,3);empty(f.ctx);note('failed-packet-accounting');
 });
 test('request deadlines are isolated across concurrent calls sharing a Context',async t=>{
- const f=await owned(t,{timeoutMs:150},async function(argv){if(argv[1]==='--version')return packet('v\n');if(argv[3]==='fast'){await delay(5);return packet('fast\n');}await delay(1000,undefined,{signal:this.signal});return packet('slow\n');});
+ const f=await owned(t,{timeoutMs:1000},async function(argv){if(argv[1]==='--version')return packet('v\n');if(argv[3]==='fast'){await delay(5);return packet('fast\n');}await delay(3000,undefined,{signal:this.signal});return packet('slow\n');});
  const slow=assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['slow']}),capacity('timeout_ms'));
  const fast=await f.ctx.call('demangle_swift',{symbols:['fast']});await slow;
  assert.equal(f.ctx.signal,undefined);assert.equal(f.ctx.ledger.size,1);assert.ok(f.ctx.ledger.has(fast.evidence_id));assert.deepEqual(f.ctx.history.map(h=>h.evidence_id),[fast.evidence_id]);
@@ -80,15 +80,17 @@ test('request deadlines are isolated across concurrent calls sharing a Context',
 });
 test('final identity reads that resolve or reject after the deadline cannot publish expired evidence',async t=>{
  for(const outcome of ['resolve','reject']){
-  const f=await owned(t,{timeoutMs:50}),read=f.ctx.read;let count=0;
-  f.ctx.read=async function(...args){const bytes=await read.apply(this,args);if(++count===2){await delay(100);if(outcome==='reject')throw Object.assign(new Error('Owned delayed identity failure'),{code:'EIO'});}return bytes;};
+  // Allow cold filesystem setup to reach the intended final-read boundary; the
+  // injected delay still exceeds this owned fixture's total request deadline.
+  const f=await owned(t,{timeoutMs:1000}),read=f.ctx.read;let count=0;
+  f.ctx.read=async function(...args){const bytes=await read.apply(this,args);if(++count===2){await delay(1100);if(outcome==='reject')throw Object.assign(new Error('Owned delayed identity failure'),{code:'EIO'});}return bytes;};
   await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['x']}),capacity('timeout_ms'));assert.equal(count,2);empty(f.ctx);
  }
  note('final-identity-deadline',{read_outcomes:['resolve','reject']});
 });
 test('evidence remains staged when the deadline expires after constructing its schema-valid record',async t=>{
- const f=await owned(t,{timeoutMs:50}),evidence=f.ctx.evidence;let staged;
- f.ctx.evidence=async function(...args){staged=await evidence.apply(this,args);assert.ok(this.ledger.has(staged.evidence_id));await delay(100);return staged;};
+ const f=await owned(t,{timeoutMs:1000}),evidence=f.ctx.evidence;let staged;
+ f.ctx.evidence=async function(...args){staged=await evidence.apply(this,args);assert.ok(this.ledger.has(staged.evidence_id));await delay(1100);return staged;};
  await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['x']}),capacity('timeout_ms'));assert.ok(staged);empty(f.ctx);note('staged-publication-deadline');
 });
 test('caller cancellation keeps its original reason and cannot affect a later successful request',async t=>{
@@ -98,11 +100,11 @@ test('caller cancellation keeps its original reason and cannot affect a later su
  f.ctx.signal=undefined;f.ctx.run=async argv=>packet(argv[1]==='--version'?'v\n':argv[3]+'\n');const e=await f.ctx.call('demangle_swift',{symbols:['x']});await delay(550);assert.ok(f.ctx.ledger.has(e.evidence_id));assert.equal(f.ctx.history.length,1);assert.equal(f.ctx.signal,undefined);note('caller-cancellation-and-reuse');
 });
 test('the batch deadline terminates a real owned Node child before its delayed filesystem action',async t=>{
- const f=await owned(t,{timeoutMs:1000}),record=join(f.folder,'children.jsonl'),marker=join(f.folder,'after-deadline.txt');
+ const f=await owned(t,{timeoutMs:4000}),record=join(f.folder,'children.jsonl'),marker=join(f.folder,'after-deadline.txt');
  f.ctx.run=async function(argv,options){f.calls.push({argv:[...argv],options:{...options}});return Context.prototype.run.call(this,[process.execPath,childFixture,record,marker,...argv.slice(1)],options);};
  const started=performance.now();await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['hold']}),capacity('timeout_ms'));const elapsed=performance.now()-started;
  const children=(await readFile(record,'utf8')).trim().split('\n').map(JSON.parse);assert.equal(children.length,2);await access(marker+'.started');
- for(const child of children)await absent(child.pid);await assert.rejects(()=>access(marker),e=>e.code==='ENOENT');assert.ok(elapsed<5000);empty(f.ctx);assert.ok(f.calls[1].options.timeout<=1000);
+ for(const child of children)await absent(child.pid);await assert.rejects(()=>access(marker),e=>e.code==='ENOENT');assert.ok(elapsed<10000);empty(f.ctx);assert.ok(f.calls[1].options.timeout<=4000);
  note('actual-owned-child-deadline',{elapsed_ms:elapsed,children,processes_physically_absent:true,delayed_action_absent:true});
 });
 test('remaining output quota bounds a real owned child and maps maxBuffer exhaustion to capacity',async t=>{

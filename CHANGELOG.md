@@ -3,7 +3,23 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
-## Unreleased — native snapshot restore transaction, 2026-10-14
+## Unreleased — evidence-bundle import transaction, 2026-10-14
+
+- Prepare historical integrity bindings without publication before inserting
+  records or unknown revisions. Recheck retained conflicts after binding await,
+  stage owned values and check cancellation before synchronous commit.
+- Add 13 owned cases for failure/cancellation preservation, a controlled Context
+  revision race and native/historical import compatibility.
+- Verify actual MCP fault/cancellation/retry with an explicit owned fixture hook
+  and a stock CLI import. Keep schemas, dependency selections and 57 notices intact.
+- Give owned Swift deadline fixtures sufficient setup time to reach the asserted
+  branches after observed cold-start failures; product budgets are unchanged.
+
+Focused verification passes 44/44. Accepted run `2b93c705-bd49-42f5-b30f-d251b968a7b1` passes **451/451 tests**
+in **62 files**, build and 139/139 operations with zero fail/skip/cancel/todo or
+timeout. Mac checks remain pending. See [scope](docs/verification/EVIDENCE_IMPORT_TRANSACTION.md).
+
+## Recorded native snapshot restore transaction — 2026-10-14
 
 - Stage snapshot annotation maps and validated evidence before selecting a target
   or changing the native session/ledger. Reject conflicting records and check
