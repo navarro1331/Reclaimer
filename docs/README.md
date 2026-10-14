@@ -15,6 +15,7 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Transactional native snapshot restore](verification/NATIVE_SNAPSHOT_TRANSACTION.md)
 - [Cached provider datatype response isolation](verification/PROVIDER_DATATYPE_ISOLATION.md)
 - [Previous identity and declaration delivery](verification/IDENTITY_DECLARATION_DELIVERY.md)
 - [NativeAOT identity associations](verification/NATIVEAOT_IDENTITY.md)

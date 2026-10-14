@@ -34,7 +34,12 @@ keep the inference authority, and never compile or execute supplied text.
 `open_binary` selects a byte identity. Session names, comments and bookmarks are
 stored in an owned in-memory analysis database. Closing deletes the provider's
 owned temporary roots. Optional snapshots contain that session overlay and evidence
-records. A snapshot is accepted only when its selected artifact SHA-256 matches.
+records. Restore checks the selected artifact SHA-256, stages recognized annotation
+maps and validates evidence with the existing bundle-import record rules before
+committing target/session state. Conflicting retained identifiers are rejected;
+identical records remain in place. Malformed input and late cancellation leave
+the prior context unchanged. Snapshots do not transfer the complete unknown ledger.
+See the [owned transaction scope](../verification/NATIVE_SNAPSHOT_TRANSACTION.md).
 
 Native byte and cached-provider reads recheck the physical source. Ordinary MCP
 sessions reject changed selected bytes. CLI analysis defaults to the same failure;

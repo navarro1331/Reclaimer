@@ -3,7 +3,22 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
-## Unreleased — cached provider datatype isolation, 2026-10-14
+## Unreleased — native snapshot restore transaction, 2026-10-14
+
+- Stage snapshot annotation maps and validated evidence before selecting a target
+  or changing the native session/ledger. Reject conflicting records and check
+  cancellation before commit; retain identical records idempotently.
+- Add 13 owned restore cases, including malformed input, failure preservation,
+  late cancellation, writer round trips and compatibility controls.
+- Verify actual MCP error envelopes, prior-evidence preservation and valid retry.
+- Preserve CLI/MCP contracts, snapshot writer/protocol, dependency selections and
+  all 57 application notices. Mac checks remain pending.
+
+Focused verification passes 22/22. Accepted run `7d179bad-793c-4bbc-b66c-09d281313402` passes **438/438 tests**
+in **61 files**, build and 139/139 operations with zero fail/skip/cancel/todo or
+timeout. See [scope](docs/verification/NATIVE_SNAPSHOT_TRANSACTION.md).
+
+## Recorded provider datatype isolation — 2026-10-14
 
 - Clone cached provider datatype replies before optional address projection so
   name, ID and address responses do not share mutable values with the cache.
