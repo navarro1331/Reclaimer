@@ -3,7 +3,21 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
-## Unreleased — 2026-10-14
+## Unreleased — cached provider datatype isolation, 2026-10-14
+
+- Clone cached provider datatype replies before optional address projection so
+  name, ID and address responses do not share mutable values with the cache.
+- Add four owned regressions covering caller mutation, retained evidence,
+  subsequent lookups and earlier-reply stability after provider cache updates.
+- Preserve CLI/MCP contracts, package/lock selections and all 57 application
+  notice files. Mac checks remain pending.
+
+All four regressions fail before the fix and pass afterward; the combined focused
+check passes 19/19. Accepted frozen run `8ff7e3d6-3bb2-43c8-8e3b-6350eeaf4e74` passes **425/425 tests**
+across **60 files**, build and 139/139 operations with zero fail/skip/cancel/todo
+or timeout. See [the scoped report](docs/verification/PROVIDER_DATATYPE_ISOLATION.md).
+
+## Recorded identity/declaration update — 2026-10-14
 
 ### Added
 

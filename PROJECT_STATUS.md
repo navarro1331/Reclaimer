@@ -1,10 +1,11 @@
 # Reclaimer project status
 
 As of 2026-10-14, Reclaimer is an independently implemented local application,
-package version 0.2.0. The current NativeAOT identity, Swift declaration and project
-documentation changes passed complete strict verification and are verified for
-scoped publication. The public branch history and fetched-remote receipt identify
-the published revision.
+package version 0.2.0. The cached provider datatype response-aliasing gap is fixed
+and passed complete strict verification with owned fixtures. Previous NativeAOT
+identity, Swift declaration and documentation proofs retain their recorded scope.
+The public branch history and fetched-remote receipt identify each published
+revision.
 
 ## Evidence currently available
 
@@ -14,8 +15,10 @@ the published revision.
 | NativeAOT focused reader/context checks | 66/66 scoped checks, owned packets and a retained compiler specimen | Passed; [scope](docs/verification/NATIVEAOT_IDENTITY.md) |
 | Swift focused checks | 45/45; actual compiler/modulewrap output with 14 normalized and 38 raw declarations | Passed; [scope](docs/verification/SWIFT_DECLARATIONS.md) |
 | Actual transport integration | Separate NativeAOT 5/5 and Swift 4/4 checks, including evidence export/import and failure preservation | Passed in their documented scope |
-| Provisional sanitized public snapshot | Build and 106/106 focused tests; private provider settings absent | Provisional pass; final snapshot verification is bound separately to the published manifest |
-| Accepted current strict run | 421/421 tests across 59 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Passed; run c077cb0c-96f2-45f4-a4a5-73ec14af76c6; [delivery scope](docs/verification/IDENTITY_DECLARATION_DELIVERY.md) |
+| Previous identity/declaration snapshot | Build and 106/106 focused tests; private provider settings absent | Retained previous delivery; snapshot verification is bound to its published manifest |
+| Previous identity/declaration strict run | 421/421 tests across 59 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Retained run c077cb0c-96f2-45f4-a4a5-73ec14af76c6; [scope](docs/verification/IDENTITY_DECLARATION_DELIVERY.md) |
+| Provider datatype response ownership | Four regressions fail before the fix and pass after it; combined focused checks 19/19 | Passed; [scope](docs/verification/PROVIDER_DATATYPE_ISOLATION.md) |
+| Accepted current strict run | 425/425 tests across 60 files; 139/139 operations; zero failures/skips/cancellations/todos/timeout | Passed; run 8ff7e3d6-3bb2-43c8-8e3b-6350eeaf4e74; 189 unchanged inputs |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build
@@ -50,7 +53,9 @@ accepted complete run above passed after those corrections.
 Mac-only Hopper, Apple assetutil, Apple SDK/runtime and Objective-C checks remain
 pending. Broader NativeAOT generic/layout/code-target recovery, broader Swift
 versions/grammars and full REA behavioral equivalence remain unestablished.
-The recorded provider-only local embedding issue is a separate follow-up.
+The recorded provider datatype local embedding response-aliasing gap is closed
+for cached plain model observations. Owned fixture proof does not establish live
+vendor datatype inference.
 
 Publication targets the existing codex/reclaimer-public branch in
 [navarro1331/Reclaimer](https://github.com/navarro1331/Reclaimer).

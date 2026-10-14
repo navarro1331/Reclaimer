@@ -15,7 +15,8 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
-- [Current identity and declaration delivery](verification/IDENTITY_DECLARATION_DELIVERY.md)
+- [Cached provider datatype response isolation](verification/PROVIDER_DATATYPE_ISOLATION.md)
+- [Previous identity and declaration delivery](verification/IDENTITY_DECLARATION_DELIVERY.md)
 - [NativeAOT identity associations](verification/NATIVEAOT_IDENTITY.md)
 - [Swift declarations](verification/SWIFT_DECLARATIONS.md)
 - [Previous recovery delivery](verification/RECOVERY_DELIVERY.md)

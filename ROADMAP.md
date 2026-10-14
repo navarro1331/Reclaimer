@@ -8,6 +8,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 | --- | --- | --- |
 | Independent implementation and Reclaimer identity | Implemented baseline | Preserve CLI/MCP compatibility, owned implementation and fixtures, notices and separate public history. See [prior delivery](docs/verification/RECOVERY_DELIVERY.md). |
 | NativeAOT identity and Swift declaration extension | Implemented and strictly verified | Verify byte-bound names, generated aliases, additional mapped types, actual Swift declaration traits, atomic failure behavior and unchanged contracts. See [current status](PROJECT_STATUS.md). |
+| Cached provider datatype response isolation | Closed in owned fixture scope | Clone cached DTOs before address projection; prove name/ID/address caller mutation isolation and earlier-reply stability after cache updates. See [scope](docs/verification/PROVIDER_DATATYPE_ISOLATION.md). |
 | Project documentation and decision records | Created and reviewed | Maintain the requested root documents, three ADRs, working links and evidence-backed status. |
 | Mac-only provider validation | Pending operator environment | Use owned artifacts on macOS with Hopper/Apple assetutil and the relevant Apple SDK/runtime. Record genuine provider output and platform limitations. |
 | Broader NativeAOT recovery | Open | Independently prove generic/parameterized associations, original instance layouts, optional/GC/dispatch structures and method code-target bindings before promoting them. |
@@ -28,10 +29,11 @@ needs a separately agreed compatibility plan.
 
 ## Follow-up boundaries
 
-The final read-only projection review recorded a pre-existing provider-only
-local embedding response-aliasing issue. The new NativeAOT datatype and raw identity
-paths are detached, and serialized CLI/MCP replies do not expose object references.
-Track that local embedding issue separately from recovery equivalence.
+The provider datatype local embedding response-aliasing issue is closed with
+owned name/ID/address fixtures and cache-update checks. Cached provider DTOs are
+now detached before address projection, alongside the existing NativeAOT paths.
+This proves local response ownership; live vendor datatype inference and broader
+recovery equivalence retain their separate pending scope.
 
 Distribution licensing, packaged installation, hosted service operation and
 Mega worker/client activation each require their own defined scope. This roadmap
