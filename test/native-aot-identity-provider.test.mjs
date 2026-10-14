@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { digest } from '../lib/artifact-binary.mjs';
+import { recoverNativeAotDetailed } from '../lib/native-aot.mjs';
+import { recoveryPeModel } from './native-aot-recovery-build.mjs';
+import { buildOwnedAotIdentity } from './native-aot-identity-build.mjs';
+
+test('fresh owned NativeAOT8 compiler produces byte-bound namespace, assembly, type and member identities',{skip:process.env.REAL_RUN_NATIVE_VARIATIONS!=='1',timeout:180000},async t=>{
+  const receipt=await buildOwnedAotIdentity({signal:t.signal});assert.equal(receipt.success,true);assert.equal(receipt.target_execution,'not-performed');const b=await fs.readFile(receipt.retained_target),before=digest(b),parsed=recoveryPeModel(b),detail=recoverNativeAotDetailed(b,parsed.model,before,parsed.architecture,{signal:t.signal}),module=detail.modules[0],identity=detail.identity_recovery.modules[0];assert.equal(before,receipt.artifact_sha256);
+  const widget=module.types.find(type=>type.identity?.qualified_name==='Reclaimer.Owned.Identity.LedgerWidget'),nested=module.types.find(type=>type.identity?.qualified_name==='Reclaimer.Owned.Identity.LedgerWidget+NestedLeaf');assert.ok(widget);assert.ok(nested);assert.equal(widget.identity.namespace,'Reclaimer.Owned.Identity');assert.equal(widget.identity.assembly.name,'Reclaimer.Identity.Proof');assert.equal(widget.name,'NativeAOT_MT_'+BigInt(widget.address).toString(16));assert.equal(widget.name_origin,'generated');assert.equal(widget.original_name,null);assert.ok(widget.anchors.some(anchor=>anchor.kind==='nativeformat-type-map'));
+  assert.equal(widget.address,receipt.assertions.method_table_address);assert.equal(nested.address,receipt.assertions.nested_method_table_address);assert.equal(module.types.length,receipt.assertions.method_table_count);assert.equal(module.instances.length,receipt.assertions.frozen_instance_count);assert.ok(identity.extra_types.length>0);assert.ok(identity.types.filter(type=>type.binding_status==='associated').length>0);
+  const mix=identity.methods.find(method=>method.qualified_name==='Reclaimer.Owned.Identity.LedgerWidget.Mix'),serial=identity.fields.find(field=>field.qualified_name==='Reclaimer.Owned.Identity.LedgerWidget.Serial'),depth=identity.fields.find(field=>field.qualified_name==='Reclaimer.Owned.Identity.LedgerWidget+NestedLeaf.Depth');assert.ok(mix);assert.ok(serial);assert.ok(depth);assert.equal(mix.target_address,null);assert.equal(serial.offset_bytes,null);
+  for(const proof of widget.identity.source_bindings){const bytes=proof.file_offset===null?module.reconstruction.bytes.subarray(Number(BigInt(proof.address)-module.reconstruction.address),Number(BigInt(proof.address)-module.reconstruction.address)+proof.size_bytes):b.subarray(proof.file_offset,proof.file_offset+proof.size_bytes);assert.equal(digest(bytes),proof.sha256);}
+  // Mutate exactly the owned TypeMap token packet. Compact native integers are
+  // replaced only within the already bounded entry, preserving the source.
+  const corrupted=Buffer.from(b),mapProof=widget.identity.source_bindings.find(proof=>proof.role==='type-map-runtime-reference-and-metadata-token');corrupted.fill(0xff,mapProof.file_offset,mapProof.file_offset+mapProof.size_bytes);const badModel=recoveryPeModel(corrupted),bad=recoverNativeAotDetailed(corrupted,badModel.model,digest(corrupted),badModel.architecture,{signal:t.signal});assert.ok(!bad.modules[0].types.some(type=>type.identity?.qualified_name===widget.identity.qualified_name));assert.equal(digest(await fs.readFile(receipt.retained_target)),before);
+});

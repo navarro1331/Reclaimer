@@ -1,0 +1,33 @@
+# Detailed Reclaimer documentation
+
+Start with the repository [README](../README.md), [architecture](../ARCHITECTURE.md),
+[roadmap](../ROADMAP.md), [status](../PROJECT_STATUS.md),
+[completion contract](../COMPLETION_CONTRACT.md) and [changelog](../CHANGELOG.md).
+The root entry points and decisions directory follow the operator's requested
+layout; existing detailed subsystem and verification documents remain here.
+
+## Architecture
+
+- [Independent design and provenance](architecture/INDEPENDENT_DESIGN.md)
+- [Artifacts and native analysis](architecture/ARTIFACTS.md)
+- [JavaScript analysis](architecture/JAVASCRIPT.md)
+- [Runtime observations and ownership](architecture/RUNTIME.md)
+
+## Current verification scope
+
+- [Current identity and declaration delivery](verification/IDENTITY_DECLARATION_DELIVERY.md)
+- [NativeAOT identity associations](verification/NATIVEAOT_IDENTITY.md)
+- [Swift declarations](verification/SWIFT_DECLARATIONS.md)
+- [Previous recovery delivery](verification/RECOVERY_DELIVERY.md)
+- [NativeAOT storage recovery](verification/NATIVEAOT_RECOVERY.md)
+- [Swift metadata recovery](verification/SWIFT_RECOVERY.md)
+- [Swift literal input](verification/SWIFT_STDIN.md) and [batch budgets](verification/SWIFT_BUDGET.md)
+
+Raw machine-specific diagnostics and receipts remain local. A scope report
+describes its named fixtures and platform; it does not certify complete parity.
+
+## Decisions
+
+- [ADR-001: architecture](../decisions/ADR-001-architecture.md)
+- [ADR-002: database/storage](../decisions/ADR-002-database.md)
+- [ADR-003: authentication](../decisions/ADR-003-authentication.md)

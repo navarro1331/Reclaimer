@@ -24,7 +24,7 @@ async function produce(signal) {
  await fs.mkdir(evidence,{recursive:true});
  const runner=new Context({signal}),before=await fs.readFile(source),compilerBefore=await fs.readFile(frontend);
  const moduleFile=path.join(evidence,'OwnedDeclarations.swiftmodule'),object=path.join(evidence,'owned-serialized-declarations.o');
- const version=await runner.run([frontend,'-version'],{timeout:10000,maxBytes:1048576});
+ const version=await runner.run([frontend,'-version'],{timeout:30000,maxBytes:1048576});
  assert.match(version.stdout,/Swift version 6\.1\.3/);
  const commands=[
   [frontend,'-emit-module','-parse-stdlib','-parse-as-library','-disable-objc-interop','-enable-library-evolution','-enable-testing','-module-name','OwnedDeclarations','-target','x86_64-apple-macosx10.15','-emit-module-path',moduleFile,source],
@@ -44,11 +44,11 @@ async function produce(signal) {
  assert.deepEqual(bytes.subarray(ast.file_offset,ast.file_offset+ast.size),moduleBytes);
  prepared={object,moduleFile,bytes,moduleBytes,image,ast,receipt:{
   verified_at:new Date().toISOString(),source:{path:source,bytes:before.length,sha256:digest(before),preserved:true},
-  compiler:{path:frontend,sha256:digest(compilerBefore),reported_version:version.stdout,version_argv:[frontend,'-version'],invocations},
+  compiler:{path:frontend,sha256:digest(compilerBefore),reported_version:version.stdout,version_argv:[frontend,'-version'],version_timeout_ms:30000,invocations},
   module:{path:moduleFile,bytes:moduleBytes.length,sha256:digest(moduleBytes)},
   artifact:{path:object,bytes:bytes.length,sha256:digest(bytes),file_type:image.file_type,ast_section:ast},
   target_execution:'not-performed',apple_sdk:'not-used',observations:[],
-  limitations:['Only fully resolved indexed nominal declarations in serialized format 0.903 are projected.','Inherited nominal arrays remain unprojected because their complete tagged encoding is not established by the pinned format declaration.','A wrapped serialized module does not establish executable membership, loading or runtime use.']
+  limitations:['Indexed nominal/actor and genuine global declarations are projected from selected serialized format 0.903 bytes, including supported inherited generic/alias relationships.','Members, initializers, enum cases and typealiases have no public declaration kind; extension access is not serialized. Supported forms retain structured raw facts and explicit normalized dispositions. Other type grammars and inherited-entry flag meanings remain partial.','A wrapped serialized module does not establish executable membership, loading or runtime use.']
  }};
  return prepared;
 }
@@ -64,7 +64,7 @@ test('actual frontend modulewrap produces nonempty serialized declaration traits
  assert.equal(modules.length,1);assert.deepEqual(modules[0].version,{major:0,minor:903});
  assert.equal(modules[0].sha256,digest(x.moduleBytes));
  const byName=new Map(r.swift_decls.map(d=>[d.name,d]));
- assert.deepEqual([...byName.keys()].sort(),['OwnedProtocol','FinalLeaf','ExtensibleBox','PublicPacket','InternalPacket','FilePacket','PrivatePacket','Choice'].sort());
+ assert.deepEqual([...byName.keys()].sort(),['OwnedProtocol','SealedBox','FinalLeaf','ExtensibleBox','ChildBox','PublicPacket','InternalPacket','FilePacket','PrivatePacket','Choice'].sort());
  for(const [name,access]of [['OwnedProtocol','public'],['FinalLeaf','public'],['ExtensibleBox','open'],['PublicPacket','public'],['InternalPacket','internal'],['FilePacket','fileprivate'],['PrivatePacket','private'],['Choice','public']]) {
   const d=byName.get(name);assert.equal(d.access_level,access);assert.equal(d.module,'OwnedDeclarations');
   assert.equal(d.is_required,false);assert.equal(d.is_convenience_init,false);assert.equal(d.is_override,false);
@@ -77,7 +77,9 @@ test('actual frontend modulewrap produces nonempty serialized declaration traits
  assert.ok(rawFinal.attributes.some(a=>a.record_code===182));
  assert.equal(rawFinal.location.file_offset,x.ast.file_offset+Math.floor(rawFinal.bit_offset/8));
  assert.equal(rawFinal.location.bit_in_byte,rawFinal.bit_offset%8);
- assert.ok(modules[0].suppressed.length>=2);assert.ok(modules[0].suppressed.every(d=>d.reason.includes('inherited-type array')));
+ assert.equal(byName.get('SealedBox').is_final,true);assert.ok(byName.get('SealedBox').protocols.includes('OwnedDeclarations.OwnedProtocol'));
+ assert.equal(byName.get('ChildBox').super_class,'OwnedDeclarations.ExtensibleBox');
+ assert.ok(modules[0].decoded_declarations.some(d=>d.kind==='constructor'));assert.ok(modules[0].suppressed.every(d=>d.reason.includes('The public schema has no')));
  assert.equal(r.swift_dispatch_slots.length,0);assert.equal(e.raw_result.swift_types.length,0);
  assert.deepEqual(reads,[x.object,x.object]);
  assert.equal(digest(await fs.readFile(x.object)),digest(x.bytes));assert.equal(digest(await fs.readFile(source)),x.receipt.source.sha256);

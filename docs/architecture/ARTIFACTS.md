@@ -71,6 +71,14 @@ Missing captures/identity remain unsupported; mismatches remain explicit.
 NativeAOT current and legacy section directories and bounded dehydrated data
 are decoded separately from generic CoreCLR signatures. Structural method-table
 candidates do not establish type identities or a committed table count.
+Embedded NativeFormat metadata retains qualified type/member names and assembly
+scope. Semantic type annotations require an explicit TypeMap token, a validated
+CommonFixups method-table pointer and matching recorded hash/bucket. Metadata-only
+names remain inventories; conflicts suppress annotation. IDs and generated aliases
+are preserved, and the unchanged public original_name field remains null. Raw
+evidence retains selected-byte bindings. Generic associations, arbitrary original
+field layouts, method entry-point associations and runtime validity remain outside
+this recovery scope.
 
 Independent Mach-O readers follow file-backed Objective-C class, method, protocol,
 category, ivar and property records, including small relative methods. Swift
@@ -78,6 +86,13 @@ nominal/field/conformance descriptors and supported static dispatch slots are
 projected through existing native operations. Source declaration traits, chained
 or authenticated pointers, resilient/generic layouts and runtime method changes
 remain incomplete. Static selector links do not prove runtime UI invocation.
+Serialized Swift module declarations use a pinned format reader over selected
+__swift_ast bytes. Supported access/finality, nested ownership, superclass and
+protocol relationships, actors and constructor/member traits retain record and
+byte coordinates. Unsupported normalized member kinds and unknown extension
+access remain explicit in raw evidence. Aggregate decode budgets cover all AST
+sections, including malformed work; failure or cancellation publishes no partial
+declaration evidence. These static cross-target fixtures do not perform Mac checks.
 
 Owned variation fixtures now exercise nonempty ELF relocations/linkage/mitigations,
 thin/universal Mach-O widths and byte orders, signature metadata/entitlements,

@@ -10,7 +10,7 @@ const runId=randomUUID(),started=new Date().toISOString();
 const output=join(root,'docs','verification');await mkdir(output,{recursive:true});
 const env={...process.env,REAL_VERIFICATION_RUN_ID:runId,NODE_OPTIONS:'--import='+new URL('./test-coverage.mjs',import.meta.url).href};
 for(const key of ['REAL_CONFIG','REAL_GHIDRA_ARGV','REAL_HOPPER_ARGV','REAL_IDA_MCP_URL','REAL_NATIVE_PROVIDER_ARGV'])delete env[key];
-function execute(args,timeout=1_200_000){return new Promise(resolve=>{
+function execute(args,timeout=3_600_000){return new Promise(resolve=>{
  const child=spawn(process.execPath,args,{cwd:root,env,shell:false,windowsHide:true,stdio:['ignore','pipe','pipe']});
  const chunks=[];let bytes=0,timedOut=false,spawnError=null;
  const capture=value=>{bytes+=value.length;if(bytes<=32*1024*1024)chunks.push(value);else child.kill();};
@@ -32,7 +32,7 @@ for(const file of await readdir(join(root,'.cache')))if(file.startsWith('operati
 const count=name=>Number(tests.output.match(new RegExp('^# '+name+' (\\d+)','m'))?.[1]??0);
 const observed=[...operations].sort(),unobserved=api.tools.map(t=>t.name).filter(name=>!operations.has(name)).sort();
 const report={run_id:runId,started_at:started,finished_at:new Date().toISOString(),root,node:process.version,platform:process.platform,
- verification_options:{native_variations:env.REAL_RUN_NATIVE_VARIATIONS==='1',swift_variations:env.REAL_RUN_SWIFT_VARIATIONS==='1',runtime_variations:env.REAL_RUN_RUNTIME_VARIATIONS==='1',build_timeout_ms:180000,test_timeout_ms:1200000},
+ verification_options:{native_variations:env.REAL_RUN_NATIVE_VARIATIONS==='1',swift_variations:env.REAL_RUN_SWIFT_VARIATIONS==='1',runtime_variations:env.REAL_RUN_RUNTIME_VARIATIONS==='1',build_timeout_ms:180000,test_timeout_ms:3600000},
  result:build.code===0&&tests.code===0?'pass':'fail',build:{exit_code:build.code,timed_out:build.timedOut??false,spawn_error:build.spawnError??null},
  tests:{files:testFiles.length,exit_code:tests.code,summary_available:/^# tests \d+$/m.test(tests.output),total:count('tests'),passed:count('pass'),failed:count('fail'),cancelled:count('cancelled'),skipped:count('skipped'),todo:count('todo'),timed_out:tests.timedOut??false},
  catalog:{mcp_operations:api.tools.length,prompts:api.prompts.length},coverage:{validated_operations:observed.length,observed,unobserved},

@@ -17,4 +17,157 @@ test('NativeAOT-shaped owned bytes retain actual derived memory with unchanged l
 test('CoreCLR RTR signature alone is never labeled NativeAOT and malformed sections do not fabricate recovery',()=>{const generic=fixture();generic[270]=0;const model={segments:[{start:'0x400000',file_offset:256,file_size:256}],symbols:[]};assert.deepEqual(recoverNativeAot(generic,model,digest(generic),'x86_64'),[]);const truncated=fixture();truncated.writeUInt16LE(200,268);assert.deepEqual(recoverNativeAot(truncated,model,digest(truncated),'x86_64'),[]);const unavailable=fixture();unavailable.writeBigUInt64LE(0x800000n,296);const report=recoverNativeAot(unavailable,model,digest(unavailable),'x86_64')[0];assert.equal(report.derived_memory,null);assert.ok(report.diagnostics.some(d=>d.includes('not uniquely file-backed')));});
 test('actual .NET NativeAOT compiler output yields bounded static rehydration from owned C#',{
  skip:process.env.REAL_RUN_NATIVE_VARIATIONS!=='1',timeout:120000,
-},async t=>{const base=path.join(path.resolve(process.env.REAL_TEST_EVIDENCE_ROOT??path.join(import.meta.dirname,'provider-fixtures')),'parity-20261013/owned-aot'),build=JSON.parse(await fs.readFile(path.join(base,'retry-build-receipt.json'),'utf8'));assert.equal(build.success,true);const bytes=await fs.readFile(path.join(base,'OwnedProbe.exe'));assert.equal(digest(bytes),build.target_sha256);for(const source of build.sources)assert.equal(digest(await fs.readFile(path.join(import.meta.dirname,'fixtures/native-owned-aot',source.name))),source.sha256);const ctx=new Context({signal:t.signal});ctx.handlers=handlers;t.after(async()=>{if(ctx.target)await ctx.call('close_binary',{});});await ctx.call('open_binary',{path:path.join(base,'OwnedProbe.exe')});const result=(await ctx.call('inspect_native_load_image',{})).normalized_result,records=result.observations.metadata_recovery??[];assert.ok(records.length>0);assert.ok(records.some(r=>r.derived_memory?.size_bytes>0),JSON.stringify(records));for(const record of records){assert.equal(record.status,'partial');assert.equal(record.analysis_artifact_sha256,build.target_sha256);assert.ok(record.method_tables>0);assert.equal(record.types.length,record.method_tables);assert.ok(record.coverage.frozen_objects_annotated>0);assert.ok(record.types.every(type=>type.type.startsWith('NativeAOT_MT_')));}assert.equal(digest(await fs.readFile(build.retained_target)),build.target_sha256);const committed=records.find(record=>record.method_tables>0);assert.equal(committed.method_tables,296);assert.equal(committed.coverage.frozen_objects_annotated,778);const datatype=(await ctx.call('inspect_native_data_type',{address:committed.types[0].address})).normalized_result;assert.equal(datatype.metadata_recovery.name_origin,'generated');assert.equal(datatype.metadata_recovery.original_name,null);const derivedRead=(await ctx.call('read_bytes',{address:committed.derived_memory.address,length:committed.derived_memory.size_bytes})).normalized_result;assert.equal(derivedRead.returned_bytes,216368);assert.equal(derivedRead.complete,true);assert.equal(digest(Buffer.from(derivedRead.bytes_hex,'hex')),committed.derived_memory.sha256);const notices=[];async function walk(dir){for(const entry of await fs.readdir(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())await walk(file);else if(/^(?:LICENSE|NOTICE|THIRD.PARTY)/i.test(entry.name))notices.push({path:file,sha256:digest(await fs.readFile(file))});}}await walk(path.join(base,'packages'));assert.ok(notices.length>=6);await fs.writeFile(path.resolve('docs/verification/NATIVEAOT_PROVIDER_REPORT.json'),JSON.stringify({verified_at:new Date().toISOString(),sdk:build.sdk_version,compiler_package:'Microsoft.DotNet.ILCompiler 8.0.31',artifact_sha256:build.target_sha256,artifact_bytes:bytes.length,source_records:build.sources,target_execution:'not-performed',source_preserved:true,recovery:records,private_vendor_notices:notices,limitations:['SDK publication, nonempty anchored fixed layouts and static frozen-instance commitments are observed for this owned specimen. Names are generated, original metadata identities remain unknown, and no target execution or vendor-database annotation occurred.'],success:true},null,2)+'\n');});
+},async t=>{
+  const base=path.join(path.resolve(process.env.REAL_TEST_EVIDENCE_ROOT??path.join(import.meta.dirname,'provider-fixtures')),'parity-20261013/owned-aot');
+  const build=JSON.parse(await fs.readFile(path.join(base,'retry-build-receipt.json'),'utf8'));
+  assert.equal(build.success,true);
+  const file=path.join(base,'OwnedProbe.exe'),bytes=await fs.readFile(file);
+  assert.equal(digest(bytes),build.target_sha256);
+  assert.equal(build.target_sha256,'276ad7a50b8f0941b6001e2c84b4f1f1b0f3094e853f8d1f078ff7e397b3dda0');
+  for(const source of build.sources){
+    assert.equal(digest(await fs.readFile(path.join(import.meta.dirname,'fixtures/native-owned-aot',source.name))),source.sha256);
+  }
+  const ctx=new Context({signal:t.signal});ctx.handlers=handlers;
+  t.after(async()=>{if(ctx.target)await ctx.call('close_binary',{});});
+  await ctx.call('open_binary',{path:file});
+  const load=await ctx.call('inspect_native_load_image',{}),records=load.normalized_result.observations.metadata_recovery??[];
+  assert.equal(load.confidence,'derived');
+  assert.equal(load.subject.digest.sha256,build.target_sha256);
+  assert.equal(records.length,1);
+  const committed=records[0],identityRecovery=load.raw_result.nativeaot_identity_recovery;
+  assert.equal(identityRecovery.source_sha256,build.target_sha256);
+  assert.equal(identityRecovery.modules.length,1);
+  const inventory=identityRecovery.modules[0];
+  assert.equal(committed.header_address,'0x14016be28');
+  assert.equal(inventory.header_address,committed.header_address);
+  assert.equal(committed.status,'partial');
+  assert.equal(committed.analysis_artifact_sha256,build.target_sha256);
+  assert.equal(committed.method_tables,648);
+  assert.equal(committed.types.length,committed.method_tables);
+  assert.equal(committed.coverage.frozen_objects_annotated,778);
+  assert.equal(inventory.types.length,588);
+  assert.equal(inventory.methods.length,79);
+  assert.equal(inventory.fields.length,135);
+  assert.equal(inventory.extra_types.length,352);
+  const associated=inventory.types.filter(type=>type.binding_status==='associated');
+  assert.equal(associated.length,407);
+  const byAddress=new Map(associated.map(type=>[type.method_table_address,type]));
+  assert.equal(byAddress.size,407);
+  for(const type of committed.types){
+    const identity=byAddress.get(type.address);
+    assert.equal(type.type,identity?.qualified_name??'NativeAOT_MT_'+BigInt(type.address).toString(16));
+  }
+  const generated=committed.types.filter(type=>!byAddress.has(type.address));
+  assert.equal(generated.length,241);
+
+  const derivedEvidence=await ctx.call('read_bytes',{address:committed.derived_memory.address,length:committed.derived_memory.size_bytes});
+  const derivedRead=derivedEvidence.normalized_result,rebuilt=Buffer.from(derivedRead.bytes_hex,'hex');
+  assert.equal(derivedRead.returned_bytes,216368);
+  assert.equal(derivedRead.complete,true);
+  assert.equal(digest(rebuilt),committed.derived_memory.sha256);
+  assert.equal(derivedEvidence.confidence,'derived');
+  assert.equal(derivedEvidence.provider.id,'reclaimer-nativeaot-session');
+  assert.equal(derivedEvidence.raw_result.derived_memory.file_offset,null);
+  assert.equal(derivedEvidence.raw_result.returned_bytes_sha256,committed.derived_memory.sha256);
+  const selectedIdentities=[];
+  let fileBindings=0,derivedBindings=0;
+  for(const expected of [
+    {name:'System.String',address:'0x1400f81f0',assembly:'System.Private.CoreLib'},
+    {name:'Program',address:'0x1400f7a18',assembly:'OwnedProbe'},
+    {name:'OwnedProbe',address:'0x1400f79e0',assembly:'OwnedProbe'},
+  ]){
+    const evidence=await ctx.call('inspect_native_data_type',{address:expected.address});
+    const datatype=evidence.normalized_result,identity=evidence.raw_result.nativeaot_identity;
+    const legacyAlias='NativeAOT_MT_'+BigInt(expected.address).toString(16);
+    assert.equal(datatype.id,'nativeaot:mt:'+expected.address);
+    assert.equal(datatype.name,expected.name);
+    assert.equal(datatype.metadata_recovery.name_origin,'inferred');
+    assert.equal(datatype.metadata_recovery.original_name,null);
+    assert.equal(evidence.raw_result.source_sha256,build.target_sha256);
+    assert.equal(identity.binding_status,'associated');
+    assert.equal(identity.qualified_name,expected.name);
+    assert.equal(identity.assembly.name,expected.assembly);
+    assert.equal(identity.method_table_address,expected.address);
+    assert.equal(byAddress.get(expected.address).qualified_name,expected.name);
+    for(const role of ['metadata-record','metadata-name','type-map-runtime-reference-and-metadata-token',
+      'common-fixup-relative-method-table-pointer','recorded-method-table-hash','validated-fixed-method-table-layout']){
+      assert.ok(identity.source_bindings.some(binding=>binding.role===role),role);
+    }
+    for(const binding of identity.source_bindings){
+      let selected;
+      if(binding.file_offset===null){
+        const offset=Number(BigInt(binding.address)-BigInt(committed.derived_memory.address));
+        assert.ok(Number.isSafeInteger(offset)&&offset>=0&&offset+binding.size_bytes<=rebuilt.length);
+        assert.equal(binding.derived_memory_sha256,committed.derived_memory.sha256);
+        selected=rebuilt.subarray(offset,offset+binding.size_bytes);derivedBindings++;
+      }else{
+        assert.ok(Number.isSafeInteger(binding.file_offset)&&binding.file_offset>=0&&binding.file_offset+binding.size_bytes<=bytes.length);
+        selected=bytes.subarray(binding.file_offset,binding.file_offset+binding.size_bytes);fileBindings++;
+      }
+      assert.equal(digest(selected),binding.sha256,binding.role);
+    }
+    for(const selector of [expected.name,expected.assembly+'::'+expected.name,legacyAlias,datatype.id]){
+      const alias=(await ctx.call('inspect_native_data_type',{type:selector})).normalized_result;
+      assert.equal(alias.id,datatype.id);
+      assert.equal(alias.name,expected.name);
+      assert.equal(alias.metadata_recovery.name_origin,'inferred');
+      assert.equal(alias.metadata_recovery.original_name,null);
+    }
+    selectedIdentities.push({qualified_name:identity.qualified_name,assembly:identity.assembly,
+      method_table_address:identity.method_table_address,legacy_alias:legacyAlias,source_bindings:identity.source_bindings});
+  }
+  assert.ok(fileBindings>0&&derivedBindings>0);
+  const generatedEvidence=await ctx.call('inspect_native_data_type',{address:generated[0].address});
+  const generatedType=generatedEvidence.normalized_result;
+  assert.equal(generatedType.name,generated[0].type);
+  assert.equal(generatedType.metadata_recovery.name_origin,'generated');
+  assert.equal(generatedType.metadata_recovery.original_name,null);
+  assert.equal(generatedEvidence.raw_result?.nativeaot_identity,undefined);
+  for(const selector of [generatedType.name,generatedType.id]){
+    const alias=(await ctx.call('inspect_native_data_type',{type:selector})).normalized_result;
+    assert.equal(alias.id,generatedType.id);
+    assert.equal(alias.metadata_recovery.name_origin,'generated');
+    assert.equal(alias.metadata_recovery.original_name,null);
+  }
+
+  // This compiler-produced frozen CRLF is an observed storage record, not a runtime allocation.
+  const instance=(await ctx.call('inspect_native_data_type',{address:'0x1400e6d80'})).normalized_result;
+  assert.equal(instance.id,'nativeaot:instance:0x1400e6d80');
+  assert.equal(instance.fields.find(field=>field.name==='component_count').offset_bytes,8);
+  assert.equal(instance.fields.find(field=>field.name==='utf16_data').offset_bytes,12);
+  const storageEvidence=await ctx.call('read_bytes',{address:instance.address,length:16});
+  const storage=Buffer.from(storageEvidence.normalized_result.bytes_hex,'hex');
+  assert.equal(storage.readBigUInt64LE(0),0x1400f81f0n);
+  assert.equal(storage.readUInt32LE(8),2);
+  assert.deepEqual(storage.subarray(12),Buffer.from('\r\n','utf16le'));
+  assert.equal(storageEvidence.confidence,'derived');
+  assert.equal(storageEvidence.raw_result.derived_memory.file_offset,null);
+  assert.equal(storageEvidence.raw_result.returned_bytes_sha256,digest(storage));
+  assert.equal(digest(await fs.readFile(build.retained_target)),build.target_sha256);
+
+  const notices=[];
+  async function walk(dir){
+    for(const entry of await fs.readdir(dir,{withFileTypes:true})){
+      const notice=path.join(dir,entry.name);
+      if(entry.isDirectory())await walk(notice);
+      else if(/^(?:LICENSE|NOTICE|THIRD.PARTY)/i.test(entry.name))notices.push({path:notice,sha256:digest(await fs.readFile(notice))});
+    }
+  }
+  await walk(path.join(base,'packages'));assert.ok(notices.length>=6);
+  await fs.writeFile(path.resolve('docs/verification/NATIVEAOT_PROVIDER_REPORT.json'),JSON.stringify({
+    verified_at:new Date().toISOString(),sdk:build.sdk_version,compiler_package:'Microsoft.DotNet.ILCompiler 8.0.31',
+    artifact_sha256:build.target_sha256,artifact_bytes:bytes.length,source_records:build.sources,
+    target_execution:'not-performed',source_preserved:true,recovery:records,
+    identity_summary:{metadata_types:588,metadata_methods:79,metadata_fields:135,
+      associated_types:407,generated_types:241,extra_anchored_tables:352,selected_identities:selectedIdentities,
+      selected_generated_type:{id:generatedType.id,address:generatedType.address,name:generatedType.name},
+      frozen_storage:{address:instance.address,method_table_address:'0x1400f81f0',component_count:2,
+        utf16_bytes_hex:storage.subarray(12).toString('hex'),storage_sha256:digest(storage)}},
+    private_vendor_notices:notices,
+    limitations:[
+      'Static selected-byte analysis of this retained .NET 8.0.425/ILCompiler 8.0.31 owned Windows x64 specimen commits 648 fixed method tables and 778 frozen storage records. NativeFormat TypeMap, CommonFixupsTable and validated fixed layouts associate 407 type identities; 241 tables retain generated names. Public original_name remains null and generated aliases remain stable.',
+      'The metadata inventory includes 79 method and 135 field names; no method entrypoint or managed field-offset association is claimed. Generic composition, optional fields, GC descriptors, interface dispatch maps and complete managed instance layouts remain undecoded.',
+      'The 216368 reconstructed bytes and selected frozen string storage are derived static observations, not live process memory. This case does not execute the target, modify its bytes or annotate a vendor database, and establishes no Mac or other compiler-version runtime coverage.',
+    ],success:true,
+  },null,2)+'\n');
+});
