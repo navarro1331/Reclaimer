@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
+import {join,resolve} from 'node:path';
+import {tmpdir} from 'node:os';
+import {Context,digest} from '../lib/core.mjs';
+import {debuggerHandlers} from '../lib/process-debugger.mjs';
+import {runtimeFile,runtimeVendorRoot} from './runtime-provider-prerequisites.mjs';
+const run=promisify(execFile),llvm=join(runtimeVendorRoot,'llvm-23.1.3','runtime','clang+llvm-23.1.3-x86_64-pc-windows-msvc','bin');
+const lldb=process.env.REAL_TEST_LLDB?resolve(process.env.REAL_TEST_LLDB):join(runtimeVendorRoot,'codelldb-1.12.3','runtime','extension','lldb','bin','lldb.exe');
+const clang=process.env.REAL_TEST_CLANG?resolve(process.env.REAL_TEST_CLANG):join(llvm,'clang.exe'),link=process.env.REAL_TEST_LLD_LINK?resolve(process.env.REAL_TEST_LLD_LINK):join(llvm,'lld-link.exe');
+test('genuine owned LLDB exception stop is retained and stop budget retires the exact target',{timeout:120000},async t=>{
+ for(const [file,label,envName]of [[lldb,'owned-LLDB-stop','REAL_TEST_LLDB'],[clang,'owned-clang-stop','REAL_TEST_CLANG'],[link,'owned-link-stop','REAL_TEST_LLD_LINK']])if(!await runtimeFile(t,file,label,{envName}))return;
+ const dir=await mkdtemp(join(tmpdir(),'reclaimer-debugger-stops-')),source=join(dir,'owned.c'),object=join(dir,'owned.obj'),target=join(dir,'owned.exe');let safe=false;
+ t.after(async()=>{if(safe)await rm(dir,{recursive:true,force:true});else t.diagnostic('Retained unconfirmed debugger fixture '+dir);});
+ await writeFile(source,'__declspec(noinline) __declspec(dllexport) long owned_after(void){return 31;}\nlong owned_entry(void){__builtin_debugtrap();return owned_after();}\n');
+ const env={SystemRoot:process.env.SystemRoot??'C:\\Windows'};await run(clang,['-g','-O0','-ffreestanding','-fno-stack-protector','-c',source,'-o',object],{shell:false,windowsHide:true,env,timeout:30000});await run(link,['/entry:owned_entry','/subsystem:console','/nodefaultlib','/debug','/out:'+target,'/pdb:'+join(dir,'owned.pdb'),object],{shell:false,windowsHide:true,env,timeout:30000});
+ const bytes=await readFile(target),ctx=new Context({config:{lldbPath:lldb}});ctx.handlers=debuggerHandlers;ctx.target={path:target,sha256:digest(bytes),format:'pe'};
+ const originalRun=ctx.run.bind(ctx);ctx.run=async(argv,options)=>{const encoded=argv.at(-1).match(/b64decode\("([^"]+)"\)/),helper=Buffer.from(encoded[1],'base64').toString('utf8'),trace=join(dir,'helper-trace.txt');const traced='try:\n'+helper.split('\n').map(s=>' '+s).join('\n')+'\nexcept BaseException:\n import traceback\n with open('+JSON.stringify(trace)+',"w") as out:out.write(traceback.format_exc())\n raise\n';const reply=await originalRun([...argv.slice(0,-1),'script exec(__import__("base64").b64decode("'+Buffer.from(traced).toString('base64')+'"))'],options);if(!reply.stdout.includes('REAL_NATIVE_REPLY:')){let detail='';try{detail=await readFile(trace,'utf8');}catch{}t.diagnostic('Owned helper traceback '+detail+' stdout '+reply.stdout+' stderr '+reply.stderr);}return reply;};
+ const result=await ctx.call('observe_native_calls',{breakpoints:[{kind:'function',name:'owned_after'}],duration_ms:5000,max_events:1});const n=result.normalized_result;
+ assert.equal(n.process.other_stops.length,1);const stop=JSON.parse(n.process.other_stops[0]);assert(['Exception','Signal','Trace'].includes(stop.reason),JSON.stringify(stop));assert(stop.thread_id>0);assert(stop.description.length<=512);assert(stop.data.length<=16);assert.equal(n.process.outcome,'stop-limit');assert.equal(n.process.terminated,true);assert.equal(n.events.length,0);assert.equal(n.coverage.status,'partial');assert.equal(n.coverage.event_limit_reached,false);assert.throws(()=>process.kill(n.process.pid,0),e=>e.code==='ESRCH');assert.equal(digest(await readFile(target)),digest(bytes));safe=true;t.diagnostic('Actual LLDB other-stop '+JSON.stringify({stop,pid:n.process.pid,root_absent:true,source_preserved:true}));
+});

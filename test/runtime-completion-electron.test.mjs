@@ -1,0 +1,54 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {EventEmitter} from 'node:events';
+import {createContext,runInContext,Script} from 'node:vm';
+import {mkdtemp,mkdir,writeFile,readFile,rm,readdir} from 'node:fs/promises';
+import {join} from 'node:path';
+import {installElectronObserver,finishElectronObserver} from '../lib/electron-observer.mjs';
+import {runtimeElectron} from './runtime-provider-prerequisites.mjs';
+import {context,root,electronPath} from './runtime-owned-fixtures.mjs';
+
+function harness(){
+ const app=new EventEmitter(),ses=new EventEmitter(),wc=new EventEmitter(),handlers=new Map(),children=[];
+ const module={app,ipcMain:{handle(c,f){handlers.set(c,f);},handleOnce(c,f){handlers.set(c,function(...a){handlers.delete(c);return Reflect.apply(f,this,a);});}},webContents:{getAllWebContents:()=>[wc]},
+  utilityProcess:{fork(){const child=new EventEmitter();child.postMessage=function(v){this.sent=v;return undefined;};children.push(child);return child;}},
+  shell:{openPath:()=>Promise.resolve('owned-error')},autoUpdater:Object.assign(new EventEmitter(),{checkForUpdates(){return 'owned-update';}}),session:{defaultSession:ses}};
+ wc.id=1;wc.isDestroyed=()=>false;wc.getURL=()=> 'file:///owned.html';wc.session=ses;
+ ses.setPermissionCheckHandler=f=>{ses.check=f;};ses.setPermissionRequestHandler=f=>{ses.request=f;};ses.registerPreloadScript=x=>'owned-preload';ses.unregisterPreloadScript=()=>{};ses.getPreloadScripts=()=>[];
+ const process={dlopen(_module,file){if(file==='bad')throw new Error('owned-load-failed');return 12;}};
+ const sandbox=createContext({process,URL}),application={evaluate:(fn,arg)=>runInContext('('+fn.toString()+')',sandbox)(module,arg)};
+ return {app,ses,wc,module,process,application,handlers,children};
+}
+test('owned Electron public API observer preserves once, utility, permission, addon and async call semantics',async()=>{
+ const x=harness(),original=x.module.ipcMain.handleOnce,dlopen=x.process.dlopen;await installElectronObserver(x.application,'ownedObserver');
+ x.module.ipcMain.handleOnce('once',(_e,v)=>({answer:v.n+1}));assert.deepEqual(x.handlers.get('once')({sender:x.wc},{n:3,secret:'PRIVATE'}),{answer:4});assert.equal(x.handlers.has('once'),false);
+ const child=x.module.utilityProcess.fork('owned.cjs',[],{env:{secret:'PRIVATE'}});child.pid=123;child.emit('spawn');child.postMessage({n:8,secret:'PRIVATE'});assert.equal(child.sent.n,8);child.emit('message',{answer:9,secret:'PRIVATE'});child.emit('exit',0);
+ x.ses.setPermissionCheckHandler(()=>false);assert.equal(x.ses.check(x.wc,'geolocation','file:///',{}),false);x.ses.setPermissionRequestHandler((_w,_p,cb)=>cb(false));let granted;x.ses.request(x.wc,'media',v=>{granted=v;},{});assert.equal(granted,false);
+ assert.equal(x.process.dlopen({},'good'),12);assert.throws(()=>x.process.dlopen({},'bad'),/owned-load-failed/);const pending=x.module.shell.openPath('PRIVATE');assert.equal(await pending,'owned-error');assert.equal(x.module.autoUpdater.checkForUpdates(),'owned-update');x.module.autoUpdater.emit('update-not-available',{secret:'PRIVATE'});x.ses.registerPreloadScript({type:'frame',filePath:'PRIVATE'});x.wc.emit('preload-error',{},'PRIVATE',new Error('PRIVATE'));
+ assert.throws(()=>x.module.autoUpdater.emit('error',new Error('OWNED_UNHANDLED_UPDATE')),/OWNED_UNHANDLED_UPDATE/);
+ await new Promise(setImmediate);const captured=await finishElectronObserver(x.application,'ownedObserver'),rows=captured.events;
+ for(const kind of ['main-handler-invocation','utility-process-fork','utility-process-message','ipc-utility-to-main','permission','native-addon','shell-attempt','updater','preload'])assert(rows.some(e=>e.kind===kind),kind);
+ assert(rows.some(e=>e.event==='ipcMain.handleOnce'&&e.phase==='completed'));assert(rows.some(e=>e.kind==='native-addon'&&e.phase==='failed'));assert(rows.some(e=>e.event==='utility-exit'&&e.process_type==='utility'));assert.equal(JSON.stringify(rows).includes('PRIVATE'),false);
+ assert.equal(x.module.ipcMain.handleOnce,original);assert.equal(x.process.dlopen,dlopen);assert.equal(child.listenerCount('message'),0);assert.equal(x.wc.listenerCount('preload-error'),0);
+});
+test('owned Electron observer preserves application replacements and bounds new utility listener acquisition',async()=>{
+ const x=harness();await installElectronObserver(x.application,'ownedObserver');const replacement=()=>17;x.module.shell.openPath=replacement;
+ for(let i=0;i<130;i++)x.module.utilityProcess.fork('owned.cjs');const captured=await finishElectronObserver(x.application,'ownedObserver');assert.equal(x.module.shell.openPath,replacement);assert(captured.conflicts>0);assert(captured.unavailable?.includes('utility-inventory-limit'),'The utility listener inventory must report its bound');assert.equal(x.children[128].listenerCount('message'),0);assert(x.children.every(child=>child.listenerCount('message')===0));
+});
+test('owned Electron observer does not execute returned thenable getters or suppress unhandled error semantics',async()=>{
+ const x=harness();let getterReads=0;const returned=Object.defineProperty({},'then',{get(){getterReads++;throw new Error('OWNED_THENABLE_GETTER');}});x.module.shell.openPath=()=>returned;await installElectronObserver(x.application,'ownedObserver');
+ try{let actual;assert.doesNotThrow(()=>{actual=x.module.shell.openPath('owned');});assert.equal(actual,returned);x.module.ipcMain.handleOnce('opaque',()=>returned);assert.equal(x.handlers.get('opaque')({sender:x.wc}),returned);assert.equal(getterReads,0);assert.throws(()=>x.module.autoUpdater.emit('error',new Error('OWNED_UNHANDLED')),/OWNED_UNHANDLED/);}finally{await finishElectronObserver(x.application,'ownedObserver');}
+});
+test('genuine Electron future once and utility IPC produce independent effects and physically exit',{timeout:120000},async t=>{
+ if(!await runtimeElectron(t))return;const dir=await mkdtemp(join(root,'test/runtime-completion-electron-')),appDir=join(dir,'app');await mkdir(appDir);const main=join(appDir,'main.cjs'),effects=join(dir,'effects.json'),pidPath=join(dir,'pid.txt'),utilityPidPath=join(dir,'utility-pid.txt');let ended=false;
+ t.after(async()=>{if(ended)await rm(dir,{recursive:true,force:true});else t.diagnostic('Retained unconfirmed fixture '+dir);});
+ const code=`const {app,BrowserWindow,ipcMain,utilityProcess,shell,session,autoUpdater}=require('electron');const fs=require('node:fs');fs.writeFileSync(${JSON.stringify(pidPath)},String(process.pid));ipcMain.on('register',e=>{session.defaultSession.setPermissionCheckHandler(()=>true);session.defaultSession.setPermissionRequestHandler((_wc,permission,callback)=>{fs.writeFileSync(${JSON.stringify(join(dir,'permission.txt'))},permission);callback(false);});session.defaultSession.registerPreloadScript({type:'frame',filePath:${JSON.stringify(join(appDir,'session-preload.cjs'))}});try{autoUpdater.checkForUpdates();}catch{}ipcMain.handleOnce('once',async(_event,value)=>{const child=utilityProcess.fork(${JSON.stringify(join(appDir,'utility.cjs'))},[],{stdio:'ignore'});child.on('spawn',()=>{fs.writeFileSync(${JSON.stringify(utilityPidPath)},String(child.pid));child.postMessage({n:value.n});});const answer=await new Promise(r=>child.once('message',r));await new Promise(r=>child.once('exit',r));const shellResult=await shell.openPath(${JSON.stringify(join(dir,'does-not-exist.owned'))});try{process.dlopen({exports:{}},${JSON.stringify(join(dir,'invalid-owned.node'))});}catch{}const bad=new BrowserWindow({show:false,webPreferences:{preload:${JSON.stringify(join(appDir,'bad-preload.cjs'))}}});await bad.loadURL('data:text/html,OwnedPreloadFailure');fs.writeFileSync(${JSON.stringify(effects)},JSON.stringify({answer:answer.n,shellFailed:!!shellResult}));return answer;});e.sender.send('registered');});app.whenReady().then(()=>{const w=new BrowserWindow({show:false,webPreferences:{preload:${JSON.stringify(join(appDir,'preload.cjs'))}}});w.loadFile(${JSON.stringify(join(appDir,'index.html'))});});`;
+ new Script(code);await writeFile(main,code);await writeFile(join(dir,'invalid-owned.node'),'OWNED_INVALID_NATIVE_MODULE');await writeFile(join(appDir,'utility.cjs'),`process.parentPort.once('message',e=>{process.parentPort.postMessage({n:e.data.n+1});setTimeout(()=>process.exit(0),50);});`);
+ await writeFile(join(appDir,'preload.cjs'),`const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('owned',{run:async()=>{await new Promise(r=>{ipcRenderer.once('registered',r);ipcRenderer.send('register');});return ipcRenderer.invoke('once',{n:40,privateValue:'PRIVATE_VALUE'});}});`);
+ await writeFile(join(appDir,'session-preload.cjs'),`globalThis.ownedSessionPreload=true;`);await writeFile(join(appDir,'bad-preload.cjs'),`throw new Error('OWNED_PRELOAD_FAILURE');`);
+ await writeFile(join(appDir,'index.html'),`<button id="run">Run</button><output></output><script>document.querySelector('#run').onclick=async()=>{const value=await owned.run();await new Promise(resolve=>navigator.geolocation.getCurrentPosition(resolve,resolve,{timeout:1000}));document.querySelector('output').textContent=value.n;};</script>`);
+ const result=(await context(dir).call('capture_electron_scenario',{executable_path:electronPath,application_path:main,application_root:appDir,actions:[{step_id:'run',kind:'click',selector:'#run'},{step_id:'settle',kind:'wait',duration_ms:2000}]})).normalized_result;
+ assert(result.actions.every(a=>a.status==='completed'),JSON.stringify(result.actions));assert.deepEqual(JSON.parse(await readFile(effects,'utf8')),{answer:41,shellFailed:true});assert(result.ipc.events.some(e=>e.event==='ipcMain.handleOnce'&&e.phase==='completed'));for(const kind of ['utility-process-fork','utility-process-message','ipc-utility-to-main'])assert(result.ipc.events.some(e=>e.kind===kind),kind);assert(result.timeline.events.some(e=>e.kind==='shell-attempt'&&e.phase==='completed'));assert(result.timeline.events.some(e=>e.kind==='native-addon'&&e.phase==='failed'));assert.equal(JSON.stringify(result).includes('PRIVATE_VALUE'),false);
+ assert.equal(await readFile(join(dir,'permission.txt'),'utf8'),'geolocation');assert(result.timeline.events.some(e=>e.kind==='permission'&&e.phase==='completed'));assert(result.timeline.events.some(e=>e.kind==='updater'&&e.event==='checkForUpdates'));assert(result.timeline.events.some(e=>e.kind==='preload'&&e.event==='registerPreloadScript'&&e.phase==='completed'));assert(result.timeline.events.some(e=>e.kind==='preload'&&e.event==='preload-error'&&e.error));
+ for(const file of [pidPath,utilityPidPath]){const pid=Number(await readFile(file,'utf8'));assert(pid>0);assert.throws(()=>process.kill(pid,0),e=>e.code==='ESRCH');}assert.equal((await readdir(dir)).filter(n=>n.startsWith('real-electron-')).length,0);ended=true;t.diagnostic('Actual owned main and utility PIDs absent; provider profile removed.');
+});

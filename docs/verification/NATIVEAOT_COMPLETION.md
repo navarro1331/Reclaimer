@@ -1,5 +1,7 @@
 # NativeAOT capability completion
 
+The [six-area extension](SIX_AREA_COMPLETION.md) adds the current qualified profiles and remaining-work reasons. The measurements below retain their earlier delivery scope.
+
 This phase extends the independently authored reader with bounded generic identities, metadata signatures, recorded reflection entrypoints and instance field offsets. It does not establish arbitrary NativeAOT reconstruction, original IL recovery, target execution or platform-wide parity. Public CLI/MCP schemas remain unchanged; `metadata_recovery.original_name` remains null and generated identifiers/aliases remain stable.
 
 ## Supported slice

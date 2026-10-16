@@ -1,5 +1,7 @@
 # Independent artifact and native analysis
 
+Current extensions and outstanding limits appear in the [six-area scope](../verification/SIX_AREA_COMPLETION.md). Earlier fixture observations below retain their named profile scope.
+
 The implementation reads supplied bytes and keeps original files unchanged. Format
 parsers, fixtures and vendor bridges were authored for this staging tree using the
 observed public protocol and official format/API references. The public wire

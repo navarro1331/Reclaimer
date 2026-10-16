@@ -27,3 +27,9 @@ Place an independently owned ELF at `<fixture-project>/owned.elf` and create a s
 This is a local tested worker example, not live Mega registration or activation. It covers an owned static artifact and does not prove general worker behavior, vendor installation, macOS, licensed IDA or selected-target execution.
 
 The builders reject an output that canonically falls inside a copied runtime tree before creating it, including existing directory aliases. The package builder also protects the bundled dependency input tree. It captures its own builder bytes before packing and rejects a changed input before issuing a source-unchanged receipt. Subprocess receipts explicitly mark capture overflow and reject partial output. The Docker launcher assigns a fresh run label/name, inspects that exact identity in `finally`, verifies ownership and removes only its exact container ID after success, failure or timeout. A failed cleanup remains a failed receipt; a timed-out Docker client is not treated as proof that the container stopped.
+
+## Optional qualified adapters
+
+XAR bzip2/lzma/xz decoding uses an explicit `pkgCodecPythonArgv` executable and the bundled isolated stdlib helper; see example (raw receipt retained locally) and [current scope](../verification/SIX_AREA_COMPLETION.md). Stored/zlib XAR needs no Python adapter. Configuring an optional decoder does not run installer scripts.
+
+Linux native UI requires a caller-selected PID/X11 window ID, a real local X11 and D-Bus/AT-SPI session, and `/usr/bin/python3` with GI/Atspi/Gdk/GdkX11 and Xlib/XRes support. No desktop services are installed or activated. The owned GTK/Xvfb producer provisions dependencies only inside a separate labelled test image; it is not part of the static worker image or evidence of arbitrary desktop/Wayland support. Its Dockerfile and exact runtime restrictions are retained in [the owned fixture](../../test/fixtures/runtime-linux-ui/Dockerfile).

@@ -24,10 +24,7 @@ identifiers and revisions remain opaque reference data with a local integrity
 binding; their original producer digest or authenticity is not established.
 
 Native snapshots are selected-source-bound local session files. The current
-snapshot loader checks its protocol and target SHA256, then restores annotations
-and evidence directly. These snapshots omit the unknown ledger. They do not
-perform the evidence-bundle contract, reference or revision validation described
-above. Export files use ordinary file writes, not an atomic backup protocol.
+snapshot loader checks its protocol and target SHA256, validates retained evidence contracts and references, rejects conflicts and stages annotations/evidence before commit. These snapshots omit the unknown ledger; unsupported unknown-revision restoration is not inferred from a successful native restore. Export files use ordinary file writes, not an atomic backup protocol.
 
 The evidence ledger lives for the context lifetime. Closing a native binary
 releases selected-session state but does not purge the retained evidence ledger.

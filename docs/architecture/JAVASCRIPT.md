@@ -1,5 +1,7 @@
 # JavaScript and application graphs
 
+Current extensions and outstanding limits appear in the [six-area scope](../verification/SIX_AREA_COMPLETION.md). Earlier fixture observations below retain their named profile scope.
+
 The independent JavaScript subsystem reads explicitly selected local directories
 and ASAR archives. It hashes retained bytes, parses JavaScript/JSX and
 TypeScript/TSX with Babel, and records two separate representations: an

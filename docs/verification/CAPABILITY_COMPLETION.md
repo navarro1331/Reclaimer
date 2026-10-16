@@ -1,5 +1,7 @@
 # Local capability completion scope
 
+The [six-area extension](SIX_AREA_COMPLETION.md) adds the current qualified profiles and remaining-work reasons. The measurements below retain their earlier delivery scope.
+
 This delivery extends independently authored recovery and closes concrete local
 verification gaps. It does not establish completion of every language, provider,
 project or REA behavior. The operator confirmed that Mac and licensed IDA remain

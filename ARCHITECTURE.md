@@ -8,6 +8,8 @@ The compatibility boundary is the existing 95 CLI commands, 139 MCP operations
 and six prompts. The Reclaimer executable and legacy real alias reach the same
 engine. Public contract files remain the authoritative request/response definitions.
 
+The [six-area extension](docs/verification/SIX_AREA_COMPLETION.md) adds bounded language/format decoders, cooperative debugger cleanup, configured stdlib archive codecs and measured session reporting. Native/JVM inventory stages evidence before committing it; unsupported fields remain explicit. Mega execution and client activation remain separate operator actions.
+
 ## Components and data flow
 
 ```mermaid
@@ -32,7 +34,7 @@ flowchart TD
 | Engine and context | Compose handlers; validate input and successful output; retain evidence | [lib/engine.mjs](lib/engine.mjs), [lib/core.mjs](lib/core.mjs) |
 | Static investigation | Bounded file parsing and explicit provider bridges | [Artifact design](docs/architecture/ARTIFACTS.md) |
 | JavaScript investigation | Syntax, imports, source maps, relationships and reconstruction obligations | [JavaScript design](docs/architecture/JAVASCRIPT.md) |
-| Runtime investigation | Selected browser, inspector, PTY, debugger and Windows UI observations | [Runtime design](docs/architecture/RUNTIME.md) |
+| Runtime investigation | Selected browser, inspector, PTY, debugger, Windows UI and bounded Linux X11/AT-SPI observations | [Runtime design](docs/architecture/RUNTIME.md) |
 | Evidence storage | Context-scoped maps, content bindings, unknown revisions and JSON exchange | [lib/evidence.mjs](lib/evidence.mjs), [storage decision](decisions/ADR-002-database.md) |
 
 MCP requests share one context and execute through a queue. Cancellation uses

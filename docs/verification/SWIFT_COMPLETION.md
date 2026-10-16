@@ -1,5 +1,7 @@
 # Swift serialized declaration completion
 
+The [six-area extension](SIX_AREA_COMPLETION.md) adds the current qualified profiles and remaining-work reasons. The measurements below retain their earlier delivery scope.
+
 The decoder qualifies a finite declaration and source-type slice for exact
 serialized formats **0.871, 0.903 and 0.944**. Other minor versions remain
 unsupported. Public CLI/MCP declaration DTOs are unchanged. Associated types,

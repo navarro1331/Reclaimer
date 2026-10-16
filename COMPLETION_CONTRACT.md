@@ -2,10 +2,12 @@
 
 This contract defines evidence for finishing a scoped Reclaimer delivery.
 It does not make every capability, platform or REA behavior complete.
-The current scope is the finite NativeAOT/Swift capability extension, MCP
-cancellation response ownership, owned reconstruction comparison, local packaging
-and contained worker testing, documentation and publication of the verified
-update. Mac/IDA and client/live worker activation remain pending.
+The current scope is the finite six-area NativeAOT, Swift, artifact-format,
+JavaScript, runtime/provider and session-reporting extension, retained transaction
+and cancellation regressions, local packaging/contained worker verification,
+documentation and publication. The [current matrix](docs/verification/SIX_AREA_COMPLETION.md)
+records remaining branches and reasons. Mac/IDA and client/live worker activation
+remain pending.
 
 ## Acceptance criteria for this delivery
 
@@ -29,6 +31,10 @@ update. Mac/IDA and client/live worker activation remain pending.
 The full run establishes execution of its test cases. Successful operation counts
 describe observed calls, not comprehensive branch coverage. Hashes describe byte
 consistency, not authenticity, permission or legal provenance.
+
+## Six-area acceptance
+
+The current [six-area scope](docs/verification/SIX_AREA_COMPLETION.md) requires fresh owned NativeAOT, Swift, JVM/codec and isolated Linux UI producer receipts in the strict run; trace/freshness, session lifecycle, comparison, provider uncertainty and format boundary cases; and unchanged contract/notice/source hashes. Provider prerequisites are required rather than silently skipped. A public snapshot additionally builds and passes its portable focused suite. Remaining branches and their reasons must stay visible after acceptance.
 
 ## Broader product completion
 

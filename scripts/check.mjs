@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { engine } from '../lib/engine.mjs';
 import { api, validate } from '../lib/contracts.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
-async function files(directory){const results=[];for(const e of await readdir(directory,{withFileTypes:true})){if(['node_modules','.git','.cache','third-party'].includes(e.name)||e.isDirectory()&&e.name.startsWith('runtime-'))continue;const p=join(directory,e.name);if(e.isDirectory())results.push(...await files(p));else results.push(p);}return results;}
+async function files(directory){const results=[];for(const e of await readdir(directory,{withFileTypes:true})){if(['node_modules','.git','.cache','third-party'].includes(e.name)||e.isDirectory()&&directory===join(root,'test')&&e.name.startsWith('runtime-'))continue;const p=join(directory,e.name);if(e.isDirectory())results.push(...await files(p));else results.push(p);}return results;}
 // Syntax-only children are independent. Bound concurrency and each child's
 // time/capture so cold starts cannot serialize the entire repository check.
 const syntax=(await files(root)).filter(p=>p.endsWith('.mjs')).sort();let next=0,count=0;

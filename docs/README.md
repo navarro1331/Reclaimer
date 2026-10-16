@@ -15,6 +15,8 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Six-area implementation, owned proof and remaining reasons](verification/SIX_AREA_COMPLETION.md)
+
 - [Local capability completion and pending inputs](verification/CAPABILITY_COMPLETION.md)
 - [NativeAOT generic identities and member bindings](verification/NATIVEAOT_COMPLETION.md)
 - [Swift serialized versions and complex declarations](verification/SWIFT_COMPLETION.md)

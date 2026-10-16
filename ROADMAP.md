@@ -6,6 +6,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 
 | Milestone | State | Required outcome and proof |
 | --- | --- | --- |
+| Six-area capability extension | Verified finite scope; documented branches remain | Bound NativeAOT/Swift/format/JavaScript/runtime/reporting claims to owned positives, negative/resource/cancellation controls and a fresh full run. See [current scope and remaining reasons](docs/verification/SIX_AREA_COMPLETION.md). |
 | Independent implementation and Reclaimer identity | Implemented baseline | Preserve CLI/MCP compatibility, owned implementation and fixtures, notices and separate public history. See [prior delivery](docs/verification/RECOVERY_DELIVERY.md). |
 | NativeAOT identity and Swift declaration extension | Implemented and strictly verified | Verify byte-bound names, generated aliases, additional mapped types, actual Swift declaration traits, atomic failure behavior and unchanged contracts. See [current status](PROJECT_STATUS.md). |
 | Cached provider datatype response isolation | Closed in owned fixture scope | Clone cached DTOs before address projection; prove name/ID/address caller mutation isolation and earlier-reply stability after cache updates. See [scope](docs/verification/PROVIDER_DATATYPE_ISOLATION.md). |
@@ -17,7 +18,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 | Manual native annotation transaction | Closed in owned fixture scope | Stage four manual maps and unpublished evidence for seven operations; validate original caller cancellation, output and retained state before synchronous delta/evidence/history commit. Preserve failed attempts and independent successful writes. See [scope](docs/verification/ANNOTATION_TRANSACTION.md). |
 | Project documentation and decision records | Created and reviewed | Maintain the requested root documents, three ADRs, working links and evidence-backed status. |
 | Mac-only provider validation | Pending operator environment | Use owned artifacts on macOS with Hopper/Apple assetutil and the relevant Apple SDK/runtime. Record genuine provider output and platform limitations. |
-| NativeAOT generic and member extension | Strictly verified finite scope | Prove generic definitions, the one-argument .NET 8 win-x64 constructed profile, compound signatures and strict reflection-map entrypoints/offsets; preserve ambiguous identities and unknown complete layouts. See [scope](docs/verification/NATIVEAOT_COMPLETION.md). |
+| NativeAOT generic and member extension | Strictly verified finite scope | Prove generic definitions, the qualified one- and two-argument .NET 8 win-x64 constructed profiles, compound signatures and strict reflection-map entrypoints/offsets; preserve ambiguous identities and unknown complete layouts. See [scope](docs/verification/NATIVEAOT_COMPLETION.md). |
 | Additional NativeAOT breadth | Open | Prove other constructed arities, optional/dynamic/imported layouts, GC/dispatch structures and complete code/layout relationships before promoting them. |
 | Swift version/signature extension | Strictly verified finite scope | Verify exact 0.871/0.903/0.944 profiles with three real owned producers, richer callable/type facts and preallocation output bounds. See [scope](docs/verification/SWIFT_COMPLETION.md). |
 | Additional Swift breadth | Open | Prove unsupported SIL/opaque/pack/InlineArray/lifetime forms, other formats and genuine platform/runtime variants. Preserve explicit unsupported dispositions. |
@@ -28,10 +29,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 
 ## Sequencing
 
-Use accepted capability run `9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5` as the current full-suite
-baseline: 595/595 checks, 278 unchanged inputs and 139 observed operations.
-Recovery, cancellation, reconstruction and package proofs retain their explicit
-scope; the same frozen runtime has 18 actual transport cases with zero SDK notices.
+Use accepted six-area run `70fb842b-1aa2-4aef-b6c6-cd16267847e1` as the current full-suite baseline: 679/679 checks, 322 unchanged inputs and 139 observed operations. The [current gap table](docs/verification/SIX_AREA_COMPLETION.md) governs remaining work; the frozen transport replay has 18 cases and zero SDK notices.
 Mac checks remain pending until the operator's machine and tools are available. Each later recovery
 extension should start with an owned producer or byte fixture, a negative control,
 resource/cancellation cases and the existing public transport.

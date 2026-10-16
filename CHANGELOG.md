@@ -3,6 +3,17 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
+## Six-area capability extension - 2026-10-16
+
+- Extend observed NativeAOT generic/readonly profiles and Swift standalone, pack/InlineArray and ARM64 relocation routes with owned compiler fixtures.
+- Add DEX041/JVM Code profiles, auxiliary managed signatures, binary CPIO, HFS overflow and explicitly configured bounded XAR codecs.
+- Consume native observations in JavaScript comparison, classify digest-bound source-map partitions, enrich finite resource/promise ownership and package routing, and reconstruct selected closed CommonJS tables.
+- Add Electron observation hooks, public Hopper metadata/uncertainty, cooperative LLDB cancellation and selected Linux X11/AT-SPI UI proof.
+- Evaluate PTY trace/freshness options and report observed session lifecycle/capabilities/bindings. See [scope and remaining reasons](docs/verification/SIX_AREA_COMPLETION.md).
+- Bind newly decoded JVM/managed/archive output to exact parsed source bytes and stage extraction evidence/output rollback for late cancellation or invalid replies.
+
+Accepted frozen run `70fb842b-1aa2-4aef-b6c6-cd16267847e1`: build and **679/679 tests in 90 files**, 139/139 successfully schema-validated operations, and zero failures, skips, cancellations, todos or timeouts. All 322 frozen inputs remained unchanged (manifest SHA256 `f13a162bc454c092e5fc25a3de27e330a07e4e099ddfb8d9474e571710dc757d`). Native, Swift, runtime, JVM/codec and isolated Linux UI producer checks were required. The same frozen runtime passed 18 actual stock-SDK transport cases and 411 calls plus the existing CLI annotation flow, with zero SDK notices. Offline isolated package CLI/MCP/native PTY checks and the contained Linux worker passed with source preservation and physical cleanup. These measurements qualify the documented finite scope; they do not establish exhaustive branch coverage, arbitrary reconstruction or full REA parity.
+
 ## Local capability extension — 2026-10-16
 
 - Recover generic definitions and the qualified NativeAOT constructed-generic

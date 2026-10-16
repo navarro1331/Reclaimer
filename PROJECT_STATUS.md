@@ -1,21 +1,16 @@
 # Reclaimer project status
 
-As of 2026-10-16, Reclaimer is an independently implemented local application,
-package version 0.2.0. The local capability extension adds NativeAOT generic and
-member bindings, version-specific Swift declarations, explicit MCP cancellation
-response ownership, bounded reconstruction comparison, and local package/worker
-testing. The accepted frozen run `9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5` passed build and
-595/595 tests in 72 files, 139/139 observed operations, no failed/skipped/
-cancelled/todo/timed-out checks, and 278 unchanged inputs. It requires native,
-Swift and runtime checks, a fresh NativeAOT producer and all three Swift producers.
-The previous 532-test annotation delivery remains historical.
-Mac and licensed IDA are unavailable, and client/live worker activation remains
-pending as directed by the operator.
+Current delivery: the [six-area extension](docs/verification/SIX_AREA_COMPLETION.md) is verified within its owned fixture and producer scope. Its table records every remaining implementation, information-loss and unavailable-provider limit.
+
+As of 2026-10-16, Reclaimer is an independently implemented local application, package version 0.2.0. Accepted frozen run `70fb842b-1aa2-4aef-b6c6-cd16267847e1`: build and **679/679 tests in 90 files**, 139/139 successfully schema-validated operations, and zero failures, skips, cancellations, todos or timeouts. All 322 frozen inputs remained unchanged (manifest SHA256 `f13a162bc454c092e5fc25a3de27e330a07e4e099ddfb8d9474e571710dc757d`). Native, Swift, runtime, JVM/codec and isolated Linux UI producer checks were required. The same frozen runtime passed 18 actual stock-SDK transport cases and 411 calls plus the existing CLI annotation flow, with zero SDK notices. Offline isolated package CLI/MCP/native PTY checks and the contained Linux worker passed with source preservation and physical cleanup. These measurements qualify the documented finite scope; they do not establish exhaustive branch coverage, arbitrary reconstruction or full REA parity.
+
+Mac and licensed IDA are unavailable. Client and live Mega worker activation remain pending as directed by the operator.
 
 ## Evidence currently available
 
 | Evidence | Observed scope | Status |
 | --- | --- | --- |
+| Current six-area strict run | 679/679 tests across 90 files; 139/139 operations; zero fail/skip/cancel/todo/timeout; 322 unchanged inputs | Passed; run 70fb842b-1aa2-4aef-b6c6-cd16267847e1; [scope and remaining reasons](docs/verification/SIX_AREA_COMPLETION.md) |
 | Previous frozen delivery | 357/357 tests, 53 files, zero failures/skips/cancellations/todos; 139 successful schema-validated operations | Retained baseline; [report](docs/verification/RECOVERY_DELIVERY.md) |
 | NativeAOT focused reader/context checks | 66/66 scoped checks, owned packets and a retained compiler specimen | Passed; [scope](docs/verification/NATIVEAOT_IDENTITY.md) |
 | Swift focused checks | 45/45; actual compiler/modulewrap output with 14 normalized and 38 raw declarations | Passed; [scope](docs/verification/SWIFT_DECLARATIONS.md) |
@@ -40,7 +35,7 @@ pending as directed by the operator.
 | Swift completion extension | Three real producer versions with exact 0.871/0.903/0.944 profiles, richer signatures and bounded declaration expansion | Passed focused and integrated checks; [scope](docs/verification/SWIFT_COMPLETION.md) |
 | MCP cancellation response ownership | Corrected explicit-abort baseline: 7 failures/4 passing controls; fixed combined checks 65/65, zero SDK notices | Passed; [scope](docs/verification/MCP_CANCELLATION.md) |
 | Owned reconstruction scenarios | Seven original/recovered CLI scenario pairs and a mutation control; exact outputs, exits and file effects | Passed 1/1; [scope](docs/verification/OWNED_RECONSTRUCTION.md) |
-| Current accepted strict run | 595/595 tests across 72 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5; 278 unchanged inputs |
+| Previous accepted capability strict run | 595/595 tests across 72 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5; 278 unchanged inputs |
 | Frozen actual transport | 18 cases/411 calls plus existing CLI annotation; preserved state/retry/source/cleanup; zero SDK notices | Passed; [scope](docs/verification/MCP_CANCELLATION.md) |
 | Local package and worker preparation | Fresh offline isolated CLI/MCP/native PTY installation; frozen sanitized Linux image with exactly two mounts and exact owned-container cleanup | Passed locally; activation pending; [guide](docs/operations/LOCAL_INSTALL.md) |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
