@@ -15,6 +15,8 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Bounded startup and readiness recovery](verification/STARTUP_RECOVERY.md)
+- [Transactional unknown-ledger mutations](verification/UNKNOWN_MUTATION_TRANSACTION.md)
 - [Transactional evidence-bundle import](verification/EVIDENCE_IMPORT_TRANSACTION.md)
 - [Transactional native snapshot restore](verification/NATIVE_SNAPSHOT_TRANSACTION.md)
 - [Cached provider datatype response isolation](verification/PROVIDER_DATATYPE_ISOLATION.md)

@@ -48,6 +48,13 @@ maps. The [owned import scope](../verification/EVIDENCE_IMPORT_TRANSACTION.md)
 records Context race and actual transport proof. Historical bindings preserve
 opaque identifiers without certifying their original source/history.
 
+Unknown creation/update stages unpublished mutation evidence, rechecks retained
+unknown state after await and commits event/revision together after cancellation
+checks. The [owned mutation scope](../verification/UNKNOWN_MUTATION_TRANSACTION.md)
+records the focused proof and accepted full regression after
+[startup recovery](../verification/STARTUP_RECOVERY.md). MCP tools remain
+serialized; ledger events do not verify the truth of their assertions.
+
 Native byte and cached-provider reads recheck the physical source. Ordinary MCP
 sessions reject changed selected bytes. CLI analysis defaults to the same failure;
 explicit `record-and-continue` analyzes the retained opening byte view, preserves

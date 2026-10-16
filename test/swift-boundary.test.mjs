@@ -34,7 +34,7 @@ test('owned negative provider keeps option-like inputs literal and whitespace ec
  assert.deepEqual(f.calls.map(call=>call.argv),[[f.exe,'--version'],...inputs.map(input=>[f.exe,'--compact','--',input])]);
  assert.equal(e.provider.id,'swift-demangle');assert.equal(e.provider.version,'Owned fixture version 0');assert.equal(e.subject,null);assert.equal(n.provenance.length,inputs.length+1);
  n.provenance.forEach((p,i)=>{assert.equal(p.executable_sha256,digest(identity));assert.deepEqual(p.command,f.calls[i].argv);assert.deepEqual(p.exit,{code:0,signal:null});assert.equal(p.stderr_bytes,0);assert.equal(p.stdout_bytes,Buffer.byteLength(i===0?version:inputs[i-1]+'\n'));assert.equal(p.tool_version,'Owned fixture version 0');assert.equal(p.version_reason,null);});
- assert.ok(n.limitations.some(value=>value.includes('invalid Swift manglings')));assert.ok(f.calls.every(call=>call.options.timeout>0&&call.options.timeout<=10000&&call.options.maxBytes>0&&call.options.maxBytes<=16*1024*1024));
+ assert.ok(n.limitations.some(value=>value.includes('invalid Swift manglings')));assert.ok(f.calls.every(call=>call.options.timeout>0&&call.options.timeout<=30000&&call.options.maxBytes>0&&call.options.maxBytes<=16*1024*1024));
 });
 
 test('owned negative provider empty or inconsistent multiline output cannot publish partial batch evidence',async t=>{

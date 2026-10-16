@@ -3,7 +3,28 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
-## Unreleased — evidence-bundle import transaction, 2026-10-14
+## Recorded startup recovery and unknown-ledger mutation update — 2026-10-15
+
+- Prepare unpublished mutation evidence, recheck retained state after await and
+  commit event/revision together. Fourteen owned cases and actual MCP/CLI checks
+  cover failure, cancellation, competing writes and valid retries.
+- Give Swift demangler children a 30-second ceiling within the unchanged
+  120-second aggregate. Add a real pre-readiness deadline case; retain child-exit,
+  output, input, symbol and no-partial-evidence checks.
+- Start LLDB observation after launch, preserve the complete reply through a
+  duplicated pipe descriptor, and clean up the target on extraction failure.
+- Use bounded compiler/inspector/SDK readiness. Keep all 60 real compiler symbols
+  in separate genuine bounded batches, and require all native/Swift/runtime files.
+- Set the full suite's verification-only allowance to 90 minutes. Keep CLI/MCP
+  contracts, package/lock and all 57 notice hashes unchanged.
+
+Accepted run `466a7a6c-2424-4fa9-9573-b11024655358` passes **466/466 tests** in **63 files**,
+build and 139/139 operations, zero fail/skip/cancel/todo or timeout; 193 frozen
+inputs stayed unchanged. The earlier 22-failure run remains archived. Mac checks
+remain pending. See [startup recovery](docs/verification/STARTUP_RECOVERY.md) and
+[unknown mutations](docs/verification/UNKNOWN_MUTATION_TRANSACTION.md).
+
+## Recorded evidence-bundle import transaction — 2026-10-14
 
 - Prepare historical integrity bindings without publication before inserting
   records or unknown revisions. Recheck retained conflicts after binding await,

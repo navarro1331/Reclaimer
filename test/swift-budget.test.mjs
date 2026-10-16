@@ -48,7 +48,7 @@ test('exact aggregate byte boundaries accept a full batch and include version st
  const e=await f.ctx.call('demangle_swift',{symbols:['é','x']});
  assert.deepEqual(e.normalized_result.symbols.map(s=>s.output),['é','x']);assert.equal(f.ctx.ledger.size,1);assert.equal(f.ctx.history.length,1);
  assert.equal(e.normalized_result.provenance.reduce((n,p)=>n+p.stdout_bytes+p.stderr_bytes,0),10);
- assert.deepEqual(f.calls.map(c=>c.options.maxBytes),[10,5,2]);assert.ok(f.calls.every(c=>c.options.timeout>0&&c.options.timeout<=10000));
+ assert.deepEqual(f.calls.map(c=>c.options.maxBytes),[10,5,2]);assert.ok(f.calls.every(c=>c.options.timeout>0&&c.options.timeout<=30000));
  assert.equal(f.ctx.signal,undefined);assert.equal(digest(await readFile(f.identity)),digest('Owned budget provider identity; never executed.\n'));
  note('exact-boundaries',{output_bytes:10,input_bytes:3});
 });
@@ -100,12 +100,28 @@ test('caller cancellation keeps its original reason and cannot affect a later su
  f.ctx.signal=undefined;f.ctx.run=async argv=>packet(argv[1]==='--version'?'v\n':argv[3]+'\n');const e=await f.ctx.call('demangle_swift',{symbols:['x']});await delay(550);assert.ok(f.ctx.ledger.has(e.evidence_id));assert.equal(f.ctx.history.length,1);assert.equal(f.ctx.signal,undefined);note('caller-cancellation-and-reuse');
 });
 test('the batch deadline terminates a real owned Node child before its delayed filesystem action',async t=>{
- const f=await owned(t,{timeoutMs:4000}),record=join(f.folder,'children.jsonl'),marker=join(f.folder,'after-deadline.txt');
- f.ctx.run=async function(argv,options){f.calls.push({argv:[...argv],options:{...options}});return Context.prototype.run.call(this,[process.execPath,childFixture,record,marker,...argv.slice(1)],options);};
+ // Isolate the held-child deadline from version-process startup. Actual Swift
+ // version/symbol subprocesses remain covered by the live provider fixtures.
+ const f=await owned(t,{timeoutMs:25000}),record=join(f.folder,'children.jsonl'),marker=join(f.folder,'after-deadline.txt');
+ f.ctx.run=async function(argv,options){f.calls.push({argv:[...argv],options:{...options}});if(argv[1]==='--version')return packet('v\n');return Context.prototype.run.call(this,[process.execPath,childFixture,record,marker,...argv.slice(1)],options);};
  const started=performance.now();await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['hold']}),capacity('timeout_ms'));const elapsed=performance.now()-started;
- const children=(await readFile(record,'utf8')).trim().split('\n').map(JSON.parse);assert.equal(children.length,2);await access(marker+'.started');
- for(const child of children)await absent(child.pid);await assert.rejects(()=>access(marker),e=>e.code==='ENOENT');assert.ok(elapsed<10000);empty(f.ctx);assert.ok(f.calls[1].options.timeout<=4000);
+ const children=(await readFile(record,'utf8')).trim().split('\n').map(JSON.parse);assert.equal(children.length,1);await access(marker+'.started');assert.equal(f.calls.length,2);
+ for(const child of children)await absent(child.pid);await assert.rejects(()=>access(marker),e=>e.code==='ENOENT');assert.ok(elapsed<35000);empty(f.ctx);assert.ok(f.calls[1].options.timeout<=25000);
  note('actual-owned-child-deadline',{elapsed_ms:elapsed,children,processes_physically_absent:true,delayed_action_absent:true});
+});
+test('a lowered batch deadline cancels a real owned child before its readiness receipt',async t=>{
+ const f=await owned(t,{timeoutMs:3000}),record=join(f.folder,'not-ready.jsonl'),marker=join(f.folder,'not-ready.txt');let child;
+ f.ctx.run=async function(argv,options){
+  f.calls.push({argv:[...argv],options:{...options}});if(argv[1]==='--version')return packet('v\n');
+  const pending=execute(process.execPath,[childFixture,record,marker,...argv.slice(1)],{timeout:options.timeout,maxBuffer:options.maxBytes,
+   signal:this.signal,shell:false,windowsHide:true,env:{SystemRoot:process.env.SystemRoot??'C:\\Windows',PATH:process.env.PATH??'',TEMP:process.env.TEMP??'',TMP:process.env.TMP??''}});
+  child=pending.child;const result=await pending;return {...result,exitCode:0};
+ };
+ await assert.rejects(()=>f.ctx.call('demangle_swift',{symbols:['bootstrap']}),capacity('timeout_ms'));
+ assert.ok(Number.isSafeInteger(child?.pid));await absent(child.pid);
+ for(const file of [record,marker,marker+'.started'])await assert.rejects(()=>access(file),e=>e.code==='ENOENT');
+ assert.equal(f.calls.length,2);assert.ok(f.calls[1].options.timeout<=3000);empty(f.ctx);
+ note('actual-owned-pre-readiness-deadline',{pid:child.pid,process_physically_absent:true,readiness_receipt_absent:true});
 });
 test('remaining output quota bounds a real owned child and maps maxBuffer exhaustion to capacity',async t=>{
  const f=await owned(t,{maxOutputBytes:64}),record=join(f.folder,'children.jsonl'),marker=join(f.folder,'marker.txt');let actualError;
@@ -122,4 +138,4 @@ test('actual CLI and unmodified MCP SDK retain existing resource error contracts
  try{await client.connect(transport);const result=await client.callTool({name:'demangle_swift',arguments:{symbols:['first','second']}});assert.equal(result.isError,true);mcpError=result.structuredContent;assert.equal(mcpError.error.code,'resource_constraint');assert.equal(mcpError.error.details.reason,'swift_batch_budget_exhausted');const bundle=await client.callTool({name:'get_evidence_bundle',arguments:{}});assert.equal(bundle.structuredContent.result.records.length,0);}finally{await client.close();await transport.close();}
  note('actual-cli-mcp-error-contracts',{cli:cliError,mcp:mcpError,selected_source_preserved:true,retained_mcp_records:0});
 });
-test.after(async()=>{assert.equal(observations.length,14);await writeFile(join(root,'docs/verification/SWIFT_BUDGET_REPORT.json'),JSON.stringify({verified_at:new Date().toISOString(),limits:SWIFT_BATCH_LIMITS,code_sha256:digest(await readFile(join(root,'lib/artifact-swift.mjs'))),fixture_sha256:digest(await readFile(childFixture)),observations,limits_of_evidence:['Packet injections establish the asserted decisions, not vendor Swift behavior.','Two real owned Node child cases establish the recorded Windows termination/output outcomes; they are not actual Swift child teardown or arbitrary descendant-tree proof.','Budgets cover decoded UTF-8 provider text and bounded symbol data inside this handler, not transport parsing, whole-process RSS or universal format/runtime parity.']},null,2)+'\n');});
+test.after(async()=>{assert.equal(observations.length,15);await writeFile(join(root,'docs/verification/SWIFT_BUDGET_REPORT.json'),JSON.stringify({verified_at:new Date().toISOString(),limits:SWIFT_BATCH_LIMITS,code_sha256:digest(await readFile(join(root,'lib/artifact-swift.mjs'))),fixture_sha256:digest(await readFile(childFixture)),observations,limits_of_evidence:['Packet injections establish the asserted decisions, not vendor Swift behavior.','Three real owned Node child cases establish the recorded Windows readiness/termination/output outcomes; they are not actual Swift child teardown or arbitrary descendant-tree proof.','The held-child deadline case uses an owned version packet to isolate its real child from separate version startup; live provider fixtures verify actual version subprocesses.','Budgets cover decoded UTF-8 provider text and bounded symbol data inside this handler, not transport parsing, whole-process RSS or universal format/runtime parity.']},null,2)+'\n');});
