@@ -15,6 +15,11 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Local capability completion and pending inputs](verification/CAPABILITY_COMPLETION.md)
+- [NativeAOT generic identities and member bindings](verification/NATIVEAOT_COMPLETION.md)
+- [Swift serialized versions and complex declarations](verification/SWIFT_COMPLETION.md)
+- [MCP cancellation response ownership](verification/MCP_CANCELLATION.md)
+- [Owned reconstruction scenarios](verification/OWNED_RECONSTRUCTION.md)
 - [Manual native annotation transaction](verification/ANNOTATION_TRANSACTION.md)
 - [Native address-name batch validation](verification/NAME_BATCH_VALIDATION.md)
 - [Bounded startup and readiness recovery](verification/STARTUP_RECOVERY.md)
@@ -32,6 +37,10 @@ layout; existing detailed subsystem and verification documents remain here.
 
 Raw machine-specific diagnostics and receipts remain local. A scope report
 describes its named fixtures and platform; it does not certify complete parity.
+
+## Local installation
+
+- [Host-specific runtime bundle and contained Docker worker](operations/LOCAL_INSTALL.md)
 
 ## Decisions
 

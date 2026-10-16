@@ -42,23 +42,24 @@ test('actual .NET NativeAOT compiler output yields bounded static rehydration fr
   assert.equal(inventory.header_address,committed.header_address);
   assert.equal(committed.status,'partial');
   assert.equal(committed.analysis_artifact_sha256,build.target_sha256);
-  assert.equal(committed.method_tables,648);
+  assert.equal(committed.method_tables,766);
   assert.equal(committed.types.length,committed.method_tables);
   assert.equal(committed.coverage.frozen_objects_annotated,778);
-  assert.equal(inventory.types.length,588);
-  assert.equal(inventory.methods.length,79);
+  assert.equal(inventory.types.filter(type=>!type.identity_kind).length,588);
+  assert.equal(inventory.types.filter(type=>type.identity_kind==='constructed-generic').length,11);
+  assert.equal(inventory.methods.filter(method=>!method.identity_kind).length,79);
   assert.equal(inventory.fields.length,135);
-  assert.equal(inventory.extra_types.length,352);
+  assert.equal(inventory.extra_types.length,470);
   const associated=inventory.types.filter(type=>type.binding_status==='associated');
-  assert.equal(associated.length,407);
+  assert.equal(associated.length,536);
   const byAddress=new Map(associated.map(type=>[type.method_table_address,type]));
-  assert.equal(byAddress.size,407);
+  assert.equal(byAddress.size,536);
   for(const type of committed.types){
     const identity=byAddress.get(type.address);
     assert.equal(type.type,identity?.qualified_name??'NativeAOT_MT_'+BigInt(type.address).toString(16));
   }
   const generated=committed.types.filter(type=>!byAddress.has(type.address));
-  assert.equal(generated.length,241);
+  assert.equal(generated.length,230);
 
   const derivedEvidence=await ctx.call('read_bytes',{address:committed.derived_memory.address,length:committed.derived_memory.size_bytes});
   const derivedRead=derivedEvidence.normalized_result,rebuilt=Buffer.from(derivedRead.bytes_hex,'hex');
@@ -75,6 +76,7 @@ test('actual .NET NativeAOT compiler output yields bounded static rehydration fr
     {name:'System.String',address:'0x1400f81f0',assembly:'System.Private.CoreLib'},
     {name:'Program',address:'0x1400f7a18',assembly:'OwnedProbe'},
     {name:'OwnedProbe',address:'0x1400f79e0',assembly:'OwnedProbe'},
+    {name:'System.Collections.Generic.EqualityComparer`1',address:'0x1400f6e40',assembly:'System.Private.CoreLib',arity:1},
   ]){
     const evidence=await ctx.call('inspect_native_data_type',{address:expected.address});
     const datatype=evidence.normalized_result,identity=evidence.raw_result.nativeaot_identity;
@@ -89,6 +91,7 @@ test('actual .NET NativeAOT compiler output yields bounded static rehydration fr
     assert.equal(identity.assembly.name,expected.assembly);
     assert.equal(identity.method_table_address,expected.address);
     assert.equal(byAddress.get(expected.address).qualified_name,expected.name);
+    if(expected.arity){assert.equal(identity.generic_parameter_count,expected.arity);assert.equal(identity.generic_parameters[0].name,'T');assert.equal(datatype.metadata_recovery.base_size_bytes,0);}
     for(const role of ['metadata-record','metadata-name','type-map-runtime-reference-and-metadata-token',
       'common-fixup-relative-method-table-pointer','recorded-method-table-hash','validated-fixed-method-table-layout']){
       assert.ok(identity.source_bindings.some(binding=>binding.role===role),role);
@@ -158,15 +161,15 @@ test('actual .NET NativeAOT compiler output yields bounded static rehydration fr
     verified_at:new Date().toISOString(),sdk:build.sdk_version,compiler_package:'Microsoft.DotNet.ILCompiler 8.0.31',
     artifact_sha256:build.target_sha256,artifact_bytes:bytes.length,source_records:build.sources,
     target_execution:'not-performed',source_preserved:true,recovery:records,
-    identity_summary:{metadata_types:588,metadata_methods:79,metadata_fields:135,
-      associated_types:407,generated_types:241,extra_anchored_tables:352,selected_identities:selectedIdentities,
+    identity_summary:{metadata_types:588,metadata_methods:79,metadata_fields:135,generic_definitions:118,constructed_generics:11,
+      associated_types:536,generated_types:230,extra_anchored_tables:470,selected_identities:selectedIdentities,
       selected_generated_type:{id:generatedType.id,address:generatedType.address,name:generatedType.name},
       frozen_storage:{address:instance.address,method_table_address:'0x1400f81f0',component_count:2,
         utf16_bytes_hex:storage.subarray(12).toString('hex'),storage_sha256:digest(storage)}},
     private_vendor_notices:notices,
     limitations:[
-      'Static selected-byte analysis of this retained .NET 8.0.425/ILCompiler 8.0.31 owned Windows x64 specimen commits 648 fixed method tables and 778 frozen storage records. NativeFormat TypeMap, CommonFixupsTable and validated fixed layouts associate 407 type identities; 241 tables retain generated names. Public original_name remains null and generated aliases remain stable.',
-      'The metadata inventory includes 79 method and 135 field names; no method entrypoint or managed field-offset association is claimed. Generic composition, optional fields, GC descriptors, interface dispatch maps and complete managed instance layouts remain undecoded.',
+      'Static selected-byte analysis of this retained .NET 8.0.425/ILCompiler 8.0.31 owned Windows x64 specimen commits 766 fixed method tables and 778 frozen storage records. Names associate for 407 canonical TypeDefinitions, 118 arity-matched generic definitions and 11 one-argument relative constructed contexts; 230 tables retain generated names. Public original_name remains null and generated aliases remain stable.',
+      'The original metadata inventory includes 79 methods and 135 fields. Supported InvokeMap packets retain selected-byte entrypoint associations, which can identify reflection stubs rather than complete native method bodies. This older specimen has no nonempty supported FieldAccessMap member entries. Multi-argument/imported/dynamic/optional generic tails, shared canonical arguments, GC descriptors, interface dispatch maps and complete managed instance layouts remain outside the supported profile.',
       'The 216368 reconstructed bytes and selected frozen string storage are derived static observations, not live process memory. This case does not execute the target, modify its bytes or annotate a vendor database, and establishes no Mac or other compiler-version runtime coverage.',
     ],success:true,
   },null,2)+'\n');

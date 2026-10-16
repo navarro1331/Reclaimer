@@ -117,9 +117,13 @@ scope. Semantic type annotations require an explicit TypeMap token, a validated
 CommonFixups method-table pointer and matching recorded hash/bucket. Metadata-only
 names remain inventories; conflicts suppress annotation. IDs and generated aliases
 are preserved, and the unchanged public original_name field remains null. Raw
-evidence retains selected-byte bindings. Generic associations, arbitrary original
-field layouts, method entry-point associations and runtime validity remain outside
-this recovery scope.
+evidence retains selected-byte bindings. The additional
+[completion scope](../verification/NATIVEAOT_COMPLETION.md) qualifies generic
+definitions, a finite constructed-generic pattern, compound signatures and
+selected InvokeMap/FieldAccessMap associations. Recorded entrypoints may be stubs;
+field offsets distinguish object-address and unboxed-value bases. Declared
+metadata layout hints remain separate. Complete original layouts, arbitrary
+generic instances and runtime validity remain unestablished.
 
 Independent Mach-O readers follow file-backed Objective-C class, method, protocol,
 category, ivar and property records, including small relative methods. Swift
@@ -127,13 +131,16 @@ nominal/field/conformance descriptors and supported static dispatch slots are
 projected through existing native operations. Source declaration traits, chained
 or authenticated pointers, resilient/generic layouts and runtime method changes
 remain incomplete. Static selector links do not prove runtime UI invocation.
-Serialized Swift module declarations use a pinned format reader over selected
-__swift_ast bytes. Supported access/finality, nested ownership, superclass and
+Serialized Swift module declarations use explicit 0.871/0.903/0.944 profiles over
+selected __swift_ast bytes, qualified with three actual owned producer versions. Supported access/finality, nested ownership, superclass and
 protocol relationships, actors and constructor/member traits retain record and
 byte coordinates. Unsupported normalized member kinds and unknown extension
 access remain explicit in raw evidence. Aggregate decode budgets cover all AST
 sections, including malformed work; failure or cancellation publishes no partial
-declaration evidence. These static cross-target fixtures do not perform Mac checks.
+declaration evidence. The [completion scope](../verification/SWIFT_COMPLETION.md)
+adds bounded function and generic types, dependent members, metatypes and callable
+signatures with version-specific operands. Other versions and unsupported grammars
+remain explicit. These static cross-target fixtures do not perform Mac checks.
 
 Owned variation fixtures now exercise nonempty ELF relocations/linkage/mitigations,
 thin/universal Mach-O widths and byte orders, signature metadata/entitlements,

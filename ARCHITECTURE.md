@@ -36,26 +36,31 @@ flowchart TD
 | Evidence storage | Context-scoped maps, content bindings, unknown revisions and JSON exchange | [lib/evidence.mjs](lib/evidence.mjs), [storage decision](decisions/ADR-002-database.md) |
 
 MCP requests share one context and execute through a queue. Cancellation uses
-request abort signals. CLI invocations create their own engine context; a command
+request abort signals. Cancelled requests finish their cleanup path without a
+late result/error or progress response; initialize requests cannot be cancelled.
+CLI invocations create their own engine context; a command
 does not implicitly share an in-memory ledger with a later process.
 
 ## Recovery boundaries
 
 NativeAOT readers reconstruct supported bytes, decode embedded metadata and
-validate supported method-table associations. Names require a TypeMap token,
-CommonFixups pointer, supported layout and recorded hash/bucket agreement.
-Generated aliases and existing IDs stay available. Type metadata and static
-storage observations do not prove runtime loading, executable method targets or
-original managed field offsets.
+validate method-table associations. Generic definitions and the qualified
+constructed-generic profile require exact metadata, fixup, layout and identity
+bindings. Supported reflection-map packets expose recorded entrypoints and field
+offsets separately from metadata layout hints. Per-type raw member evidence and
+load responses are detached from committed state. Normalized fields still describe
+method-table storage; generated aliases and existing IDs remain available. An
+entrypoint may be a stub, and an offset does not establish a complete layout or
+execution. See the [NativeAOT scope](docs/verification/NATIVEAOT_COMPLETION.md).
 
-Swift readers interpret selected Mach-O metadata and supported serialized 0.903
-module records. Nominal declarations, actors, supported inheritance and genuine
-globals can enter the normalized schema. Member kinds or unknown access values
-that the schema cannot represent stay in raw evidence with explicit dispositions.
-Reading declarations does not follow serialized source paths or run a compiler.
-
-See the [NativeAOT identity scope](docs/verification/NATIVEAOT_IDENTITY.md) and
-[Swift declaration scope](docs/verification/SWIFT_DECLARATIONS.md) for exact limits.
+Swift readers interpret selected Mach-O metadata and exact serialized formats
+0.871, 0.903 and 0.944, each qualified against an owned real producer. Nominal
+declarations, actors, supported inheritance and genuine globals enter the
+normalized schema. Richer function/generic/dependent types and callable signatures
+stay in raw evidence where the schema has no corresponding representation.
+Unknown access and unsupported grammars retain explicit dispositions. Recovery
+never follows serialized source paths or invokes a compiler. See the
+[Swift scope](docs/verification/SWIFT_COMPLETION.md).
 
 ## Ownership and authority
 
@@ -76,6 +81,12 @@ Private provider settings, toolchains, generated artifacts and raw machine recei
 stay outside the curated public snapshot. Required dependency notices remain in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Mega-Crossover retains only its
 external-project metadata and receipts; this repository owns the product.
+
+The [local package builder](docs/operations/LOCAL_INSTALL.md) creates a
+host-specific dependency bundle for an isolated prefix. The Docker worker example
+uses a sanitized context, explicit project/artifact mounts and a labelled owned
+container lifecycle with exact-ID cleanup. Neither package testing nor the worker
+example registers a live Mega worker or activates an MCP client.
 
 ## Decisions and verification
 

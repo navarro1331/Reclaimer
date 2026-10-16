@@ -3,6 +3,40 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
+## Local capability extension — 2026-10-16
+
+- Recover generic definitions and the qualified NativeAOT constructed-generic
+  profile, compound metadata signatures, recorded reflection entrypoints and
+  object/unboxed field offsets with selected-byte bindings and conflict controls.
+- Keep declared layout hints separate from runtime offsets, fixed method-table
+  storage separate from instance fields, generated aliases intact and per-type
+  raw member/load responses detached from committed state.
+- Qualify Swift serialized formats 0.871/0.903/0.944 with real owned producers;
+  retain richer function/generic/dependent types and callable signature facts in
+  existing raw evidence. Bound retained JSON expansion before allocation and
+  deduplicate NativeAOT signature provenance under a shared cancellable work cap.
+- Suppress discarded MCP replies and progress after request cancellation. Verify
+  explicit stock SDK abort reason, preserved annotation state, retry and zero
+  late unknown-ID notices without an SDK patch or warning filter.
+- Compare seven owned original/recovered CLI scenarios and file effects, with an
+  arithmetic mutation control; retain unknown general runtime equivalence.
+- Add a host-specific local dependency bundle, offline isolated CLI/MCP checks
+  and a sanitized Docker worker example. Reject self-nested output, detect
+  capture overflow and retire only the exact labelled container on failure or
+  timeout. Keep live worker/client activation pending.
+- Preserve CLI/MCP contracts, dependency selections, lock bytes and 57 notices.
+  Package metadata adds only the local build script and explicit file selection.
+
+Accepted strict run `9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5`: build, 595/595 tests
+in 72 files, 139/139 operations and 278 unchanged frozen inputs, with
+zero fail/skip/cancel/todo/timeout and required native/Swift/runtime plus fresh
+NativeAOT and all three Swift producers. Actual transport passed 18 cases/411 calls
+with zero SDK notices. The same frozen inputs passed offline isolated installation,
+installed native PTY and the contained Linux worker/image checks. Historical
+focused and failed attempts are retained separately. Mac and licensed IDA checks remain pending; unsupported
+recovery and full REA parity remain explicit. See the
+[capability scope](docs/verification/CAPABILITY_COMPLETION.md).
+
 ## Recorded native annotation transaction — 2026-10-16
 
 - Prepare names, comments, inline comments and bookmarks in request-local drafts

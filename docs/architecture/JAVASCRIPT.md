@@ -73,10 +73,12 @@ Recovery creates an exclusive output directory and retains the input bytes and
 each recovered original separately. Flat version-3 and recursively inline
 indexed maps supply embedded `sourcesContent`; maps may be standalone files,
 inline JSON data URLs or adjacent files discovered in parsed mapping comments.
-Section offset types and strict ordering are validated. Generated-coordinate
-decoding, section overlap validation and externally referenced index sections are
-not implemented. Remote maps are not fetched. Adjacent maps must resolve beneath
-the input directory. Map-declared original paths are metadata, never read paths or
+Generated VLQ coordinates, UTF-16 source positions, nested section offsets and
+strict section ordering are decoded. Overlap rejection covers declared mapping
+points; unmapped section extents remain unknown. A bounded loader captures local
+external index sections and composes supported downstream maps, preserving
+ambiguous positions, missing text and conflicts. Remote maps are not fetched.
+Adjacent and referenced maps must resolve beneath the selected input boundary. Map-declared original paths are metadata, never read paths or
 write destinations. Repeated declared names receive distinct output files.
 
 Minimal recovery preserves valid UTF-8 input bytes, including a BOM. Standard
@@ -95,7 +97,10 @@ tool behavior. The source revision identifies the owned files as read; an
 executed module revision is not independently attested. Heuristic and inspection
 extraction modes currently reuse bounded structural discovery and report partial
 coverage. Semantic rewrites and arbitrary bundle-wrapper reconstruction remain
-unsupported.
+unsupported. A separate [owned reconstruction test](../verification/OWNED_RECONSTRUCTION.md)
+compares seven original/recovered CLI scenarios and a mutation control. That
+finite execution proof does not change the recovery operation's unknown runtime
+equivalence or establish arbitrary reconstruction.
 
 ## Evidence projections and closure checks
 
@@ -105,8 +110,10 @@ prove initialization, native registration or signature validation. Managed
 projections preserve artifact-scoped metadata tokens and static call edges; native
 declarations do not prove a loaded native implementation.
 
-Runtime reconciliation currently accepts concrete V8 loaded-script capture evidence.
-Browser frame and worker projection is not implemented. Byte matching hashes
+Runtime reconciliation accepts concrete V8 and browser captures, including
+observed frame/worker containment. Owned packet controls and a real browser
+fixture cover these projections. They do not establish unobserved execution.
+Byte matching hashes
 retained captured source text and rejects conflicting declared digest or byte
 count metadata. An explicit operator file-root/URL-prefix mapping can establish
 a location candidate; URL mappings enforce origin and path-component boundaries.

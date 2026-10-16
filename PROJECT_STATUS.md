@@ -1,15 +1,16 @@
 # Reclaimer project status
 
 As of 2026-10-16, Reclaimer is an independently implemented local application,
-package version 0.2.0. Seven manual native annotation operations now prepare
-private draft maps and unpublished evidence before their validated synchronous
-commit. The complete accepted suite passes with required native/Swift/runtime
-fixtures in the documented annotation transaction scope. Previous name-batch,
-startup-recovery, unknown-ledger and bundle-import proofs retain their scope.
-Previous NativeAOT identity, Swift declaration and documentation proofs retain
-their recorded scope.
-The public branch history and fetched-remote receipt identify each published
-revision.
+package version 0.2.0. The local capability extension adds NativeAOT generic and
+member bindings, version-specific Swift declarations, explicit MCP cancellation
+response ownership, bounded reconstruction comparison, and local package/worker
+testing. The accepted frozen run `9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5` passed build and
+595/595 tests in 72 files, 139/139 observed operations, no failed/skipped/
+cancelled/todo/timed-out checks, and 278 unchanged inputs. It requires native,
+Swift and runtime checks, a fresh NativeAOT producer and all three Swift producers.
+The previous 532-test annotation delivery remains historical.
+Mac and licensed IDA are unavailable, and client/live worker activation remains
+pending as directed by the operator.
 
 ## Evidence currently available
 
@@ -34,7 +35,14 @@ revision.
 | Native address-name batch validation | Final 14 owned cases: baseline 8 failures and 6 passing controls; fixed combined focused checks 36/36; actual MCP retry/snapshot and existing CLI flow | Passed; [validation-only scope](docs/verification/NAME_BATCH_VALIDATION.md) |
 | Previous name-batch strict run | 480/480 tests across 64 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Retained accepted run d12f2b0d-3c85-4734-862d-dd60eae5be94; 194 unchanged inputs |
 | Manual native annotation transaction | Final 52 owned baseline cases: 47 failures, 5 passing controls; combined focused 123/123; 18 actual transport cases and stock CLI annotation | Passed; [bounded scope](docs/verification/ANNOTATION_TRANSACTION.md) |
-| Accepted current strict run | 532/532 tests across 65 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 1c301034-1bc0-46e0-8296-2564834d9a9f; 197 unchanged inputs |
+| Previous accepted annotation strict run | 532/532 tests across 65 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 1c301034-1bc0-46e0-8296-2564834d9a9f; 197 unchanged inputs |
+| NativeAOT completion extension | Generic definitions and bounded constructed identities, signatures, recorded method entrypoints and object/unboxed field offsets | Passed focused and integrated checks; [scope](docs/verification/NATIVEAOT_COMPLETION.md) |
+| Swift completion extension | Three real producer versions with exact 0.871/0.903/0.944 profiles, richer signatures and bounded declaration expansion | Passed focused and integrated checks; [scope](docs/verification/SWIFT_COMPLETION.md) |
+| MCP cancellation response ownership | Corrected explicit-abort baseline: 7 failures/4 passing controls; fixed combined checks 65/65, zero SDK notices | Passed; [scope](docs/verification/MCP_CANCELLATION.md) |
+| Owned reconstruction scenarios | Seven original/recovered CLI scenario pairs and a mutation control; exact outputs, exits and file effects | Passed 1/1; [scope](docs/verification/OWNED_RECONSTRUCTION.md) |
+| Current accepted strict run | 595/595 tests across 72 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5; 278 unchanged inputs |
+| Frozen actual transport | 18 cases/411 calls plus existing CLI annotation; preserved state/retry/source/cleanup; zero SDK notices | Passed; [scope](docs/verification/MCP_CANCELLATION.md) |
+| Local package and worker preparation | Fresh offline isolated CLI/MCP/native PTY installation; frozen sanitized Linux image with exactly two mounts and exact owned-container cleanup | Passed locally; activation pending; [guide](docs/operations/LOCAL_INSTALL.md) |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build
@@ -59,13 +67,13 @@ Product comparison and cleanup policies are unchanged.
 
 ## Capability disposition
 
-- NativeAOT: supported non-generic metadata-to-method-table associations can expose
-  inferred semantic names, including mapped types without frozen instances.
-  Metadata-only or conflicting names remain unpromoted. IDs and generated aliases
-  remain queryable; original_name remains null.
-- Swift: actors, nested declarations, supported superclass/protocol expressions,
-  genuine globals and byte-derived member traits are available in their documented
-  normalized/raw forms. Unsupported member kinds and unknown access stay explicit.
+- NativeAOT: validated generic definitions and a finite .NET 8 win-x64 constructed
+  profile expose inferred identities while preserving generated aliases and null
+  original_name. Supported reflection maps expose raw entrypoints and field offsets
+  with object/unboxed bases. Metadata layout declarations remain separate.
+- Swift: exact serialized versions 0.871/0.903/0.944, richer function/generic and
+  dependent types, indexed callable signatures and supported declaration traits
+  retain their normalized/raw scope. Other versions and grammars stay explicit.
 - Database: context-scoped evidence and unknown maps, with explicit JSON
   export/import and native snapshots. No relational database is configured.
 - Authentication: local CLI and stdio MCP use host/operator authority.
@@ -82,8 +90,11 @@ snapshot restoration keep their separate scopes. No universal atomicity or broad
 provider/resource guarantee is established.
 
 Mac-only Hopper, Apple assetutil, Apple SDK/runtime and Objective-C checks remain
-pending. Broader NativeAOT generic/layout/code-target recovery, broader Swift
-versions/grammars and full REA behavioral equivalence remain unestablished.
+pending, as does licensed live IDA verification. The linked completion scopes
+qualify finite NativeAOT generic/layout/code-target and Swift version/grammar
+extensions. Arbitrary original layouts, other generic/runtime profiles, unsupported
+Swift forms, arbitrary reconstruction and full REA behavioral equivalence remain
+unestablished.
 The recorded provider datatype local embedding response-aliasing gap is closed
 for cached plain model observations. Owned fixture proof does not establish live
 vendor datatype inference.
@@ -91,8 +102,9 @@ vendor datatype inference.
 Publication targets the existing codex/reclaimer-public branch in
 [navarro1331/Reclaimer](https://github.com/navarro1331/Reclaimer).
 It excludes private historical Git, provider configuration, raw diagnostics,
-toolchains and generated artifacts. No Mega worker, global install, client setup
-or schedule activation is part of this delivery.
+toolchains and generated artifacts. The local package and contained worker example are test preparation. No live
+Mega worker registration, global install, client setup or schedule activation is
+performed. See the [completion scope](docs/verification/CAPABILITY_COMPLETION.md).
 
 See the [roadmap](ROADMAP.md), [completion contract](COMPLETION_CONTRACT.md)
 and [changelog](CHANGELOG.md) for scope and follow-up.

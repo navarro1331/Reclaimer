@@ -17,14 +17,21 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 | Manual native annotation transaction | Closed in owned fixture scope | Stage four manual maps and unpublished evidence for seven operations; validate original caller cancellation, output and retained state before synchronous delta/evidence/history commit. Preserve failed attempts and independent successful writes. See [scope](docs/verification/ANNOTATION_TRANSACTION.md). |
 | Project documentation and decision records | Created and reviewed | Maintain the requested root documents, three ADRs, working links and evidence-backed status. |
 | Mac-only provider validation | Pending operator environment | Use owned artifacts on macOS with Hopper/Apple assetutil and the relevant Apple SDK/runtime. Record genuine provider output and platform limitations. |
-| Broader NativeAOT recovery | Open | Independently prove generic/parameterized associations, original instance layouts, optional/GC/dispatch structures and method code-target bindings before promoting them. |
-| Broader Swift recovery | Open | Prove additional serialized versions, richer type/signature grammars, external references and genuine platform/runtime variants. Preserve explicit unsupported dispositions. |
+| NativeAOT generic and member extension | Strictly verified finite scope | Prove generic definitions, the one-argument .NET 8 win-x64 constructed profile, compound signatures and strict reflection-map entrypoints/offsets; preserve ambiguous identities and unknown complete layouts. See [scope](docs/verification/NATIVEAOT_COMPLETION.md). |
+| Additional NativeAOT breadth | Open | Prove other constructed arities, optional/dynamic/imported layouts, GC/dispatch structures and complete code/layout relationships before promoting them. |
+| Swift version/signature extension | Strictly verified finite scope | Verify exact 0.871/0.903/0.944 profiles with three real owned producers, richer callable/type facts and preallocation output bounds. See [scope](docs/verification/SWIFT_COMPLETION.md). |
+| Additional Swift breadth | Open | Prove unsupported SIL/opaque/pack/InlineArray/lifetime forms, other formats and genuine platform/runtime variants. Preserve explicit unsupported dispositions. |
+| MCP cancellation response ownership | Closed in owned strict/transport scope | Omit discarded replies/progress, preserve queued-request ownership and explicit stock SDK abort/retry without unknown-ID notices. See [scope](docs/verification/MCP_CANCELLATION.md). |
+| Local package and contained worker | Frozen local package/image verified; activation pending | Install the host-specific bundle offline in an isolated prefix; verify installed CLI/MCP and exact Docker mounts, resource limits and owned cleanup. Keep client/live worker activation pending. See [guide](docs/operations/LOCAL_INSTALL.md). |
 | Additional provider and runtime breadth | Open | Exercise licensed/installed IDA and other unverified provider branches; extend selected-platform and lifecycle fixtures without implying universal cleanup or execution equivalence. |
 | Behavioral parity assessment | Open | Define a capability/branch matrix and compare independent, working programs on the same owned artifacts. Record matched behavior, disagreements and untested branches. |
 
 ## Sequencing
 
-Use the verified identity/declaration update and its documentation as the baseline.
+Use accepted capability run `9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5` as the current full-suite
+baseline: 595/595 checks, 278 unchanged inputs and 139 observed operations.
+Recovery, cancellation, reconstruction and package proofs retain their explicit
+scope; the same frozen runtime has 18 actual transport cases with zero SDK notices.
 Mac checks remain pending until the operator's machine and tools are available. Each later recovery
 extension should start with an owned producer or byte fixture, a negative control,
 resource/cancellation cases and the existing public transport.
@@ -58,6 +65,10 @@ conflicts. NativeAOT automatic naming, navigation, snapshot restore and general
 operation transactions retain their separate scopes. See the
 [annotation transaction report](docs/verification/ANNOTATION_TRANSACTION.md).
 
-Distribution licensing, packaged installation, hosted service operation and
-Mega worker/client activation each require their own defined scope. This roadmap
-does not schedule, authorize or claim those outcomes.
+The operator authorized local packaging and contained worker tests, with client
+activation pending. Those tests do not authorize live Mega registration.
+Distribution licensing, hosted service operation, global installation and live
+worker/client activation retain separate scopes. A seven-scenario
+[owned reconstruction comparison](docs/verification/OWNED_RECONSTRUCTION.md) adds
+finite execution evidence; arbitrary reconstruction and full REA parity remain
+unestablished.
