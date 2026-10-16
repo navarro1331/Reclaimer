@@ -1,5 +1,9 @@
 # Six-area capability extension
 
+The subsequent [managed Boolean correction](MANAGED_BOOLEAN_VALUES.md) records
+the next uncovered non-Mac defect and its verification. The measurements below
+remain the historical six-area delivery results.
+
 This delivery addresses the operator's NativeAOT, Swift, artifact, JavaScript,
 runtime/provider and session-reporting gap list with independent implementation
 and owned fixtures. CLI/MCP request and response schemas remain unchanged.

@@ -3,6 +3,20 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
+## Managed Boolean values and Electron cleanup - 2026-10-16
+
+- Preserve decoded custom-attribute Booleans as JSON `false` and `true`, including
+  boxed values and array elements. Reject invalid Boolean bytes as before.
+- Add owned regression coverage and scalar representation controls. See the
+  [scope and verification](docs/verification/MANAGED_BOOLEAN_VALUES.md).
+- Retry transient owned Electron profile locks within a bounded attempt budget
+  and defer evidence publication until cleanup and final validation succeed.
+  See the [cleanup correction](docs/verification/ELECTRON_PROFILE_CLEANUP.md).
+- Preserve CLI/MCP contracts, dependencies and required notices. Mac/IDA checks
+  and client/live worker activation remain pending.
+
+Accepted frozen run `670765f9-3115-4b0b-a7d0-1fd98d0a8e84`: build and **694/694 tests in 92 files**, 139/139 successfully schema-validated operations, zero failures/skips/cancellations/todos/timeouts, and 326 unchanged frozen inputs (manifest SHA256 `2cfbc8fac584b7218f92ab19c790f7876f3e296e2865c44670589ac49fff3399`). Required NativeAOT, Swift, runtime, JVM/codec and Linux UI producer checks passed. The isolated offline package CLI/MCP/native PTY checks passed. These results qualify the recorded fixture scope, not exhaustive behavior or REA parity.
+
 ## Six-area capability extension - 2026-10-16
 
 - Extend observed NativeAOT generic/readonly profiles and Swift standalone, pack/InlineArray and ARM64 relocation routes with owned compiler fixtures.

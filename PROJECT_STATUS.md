@@ -1,8 +1,10 @@
 # Reclaimer project status
 
-Current delivery: the [six-area extension](docs/verification/SIX_AREA_COMPLETION.md) is verified within its owned fixture and producer scope. Its table records every remaining implementation, information-loss and unavailable-provider limit.
+Current delivery: the [managed Boolean correction](docs/verification/MANAGED_BOOLEAN_VALUES.md) fixes typed custom-attribute values. The [Electron cleanup correction](docs/verification/ELECTRON_PROFILE_CLEANUP.md) addresses transient profile locks and evidence publication after cleanup. Its complete frozen verification passed. The [six-area extension](docs/verification/SIX_AREA_COMPLETION.md) retains the broader implementation, information-loss and unavailable-provider limits; its accepted measurements below describe the preceding delivery.
 
-As of 2026-10-16, Reclaimer is an independently implemented local application, package version 0.2.0. Accepted frozen run `70fb842b-1aa2-4aef-b6c6-cd16267847e1`: build and **679/679 tests in 90 files**, 139/139 successfully schema-validated operations, and zero failures, skips, cancellations, todos or timeouts. All 322 frozen inputs remained unchanged (manifest SHA256 `f13a162bc454c092e5fc25a3de27e330a07e4e099ddfb8d9474e571710dc757d`). Native, Swift, runtime, JVM/codec and isolated Linux UI producer checks were required. The same frozen runtime passed 18 actual stock-SDK transport cases and 411 calls plus the existing CLI annotation flow, with zero SDK notices. Offline isolated package CLI/MCP/native PTY checks and the contained Linux worker passed with source preservation and physical cleanup. These measurements qualify the documented finite scope; they do not establish exhaustive branch coverage, arbitrary reconstruction or full REA parity.
+Accepted frozen run `670765f9-3115-4b0b-a7d0-1fd98d0a8e84`: build and **694/694 tests in 92 files**, 139/139 successfully schema-validated operations, zero failures/skips/cancellations/todos/timeouts, and 326 unchanged frozen inputs (manifest SHA256 `2cfbc8fac584b7218f92ab19c790f7876f3e296e2865c44670589ac49fff3399`). Required NativeAOT, Swift, runtime, JVM/codec and Linux UI producer checks passed. The isolated offline package CLI/MCP/native PTY checks passed. These results qualify the recorded fixture scope, not exhaustive behavior or REA parity.
+
+Previous accepted baseline: as of 2026-10-16, Reclaimer is an independently implemented local application, package version 0.2.0. Accepted frozen run `70fb842b-1aa2-4aef-b6c6-cd16267847e1`: build and **679/679 tests in 90 files**, 139/139 successfully schema-validated operations, and zero failures, skips, cancellations, todos or timeouts. All 322 frozen inputs remained unchanged (manifest SHA256 `f13a162bc454c092e5fc25a3de27e330a07e4e099ddfb8d9474e571710dc757d`). Native, Swift, runtime, JVM/codec and isolated Linux UI producer checks were required. The same frozen runtime passed 18 actual stock-SDK transport cases and 411 calls plus the existing CLI annotation flow, with zero SDK notices. Offline isolated package CLI/MCP/native PTY checks and the contained Linux worker passed with source preservation and physical cleanup. These measurements qualify the documented finite scope; they do not establish exhaustive branch coverage, arbitrary reconstruction or full REA parity.
 
 Mac and licensed IDA are unavailable. Client and live Mega worker activation remain pending as directed by the operator.
 
@@ -10,7 +12,8 @@ Mac and licensed IDA are unavailable. Client and live Mega worker activation rem
 
 | Evidence | Observed scope | Status |
 | --- | --- | --- |
-| Current six-area strict run | 679/679 tests across 90 files; 139/139 operations; zero fail/skip/cancel/todo/timeout; 322 unchanged inputs | Passed; run 70fb842b-1aa2-4aef-b6c6-cd16267847e1; [scope and remaining reasons](docs/verification/SIX_AREA_COMPLETION.md) |
+| Current Boolean and Electron cleanup strict run | 694/694 tests across 92 files; 139/139 operations; zero fail/skip/cancel/todo/timeout; 326 unchanged inputs | Passed; run 670765f9-3115-4b0b-a7d0-1fd98d0a8e84; [scope](docs/verification/MANAGED_BOOLEAN_VALUES.md) |
+| Previous six-area strict run | 679/679 tests across 90 files; 139/139 operations; zero fail/skip/cancel/todo/timeout; 322 unchanged inputs | Passed; run 70fb842b-1aa2-4aef-b6c6-cd16267847e1; [scope and remaining reasons](docs/verification/SIX_AREA_COMPLETION.md) |
 | Previous frozen delivery | 357/357 tests, 53 files, zero failures/skips/cancellations/todos; 139 successful schema-validated operations | Retained baseline; [report](docs/verification/RECOVERY_DELIVERY.md) |
 | NativeAOT focused reader/context checks | 66/66 scoped checks, owned packets and a retained compiler specimen | Passed; [scope](docs/verification/NATIVEAOT_IDENTITY.md) |
 | Swift focused checks | 45/45; actual compiler/modulewrap output with 14 normalized and 38 raw declarations | Passed; [scope](docs/verification/SWIFT_DECLARATIONS.md) |
@@ -37,7 +40,7 @@ Mac and licensed IDA are unavailable. Client and live Mega worker activation rem
 | Owned reconstruction scenarios | Seven original/recovered CLI scenario pairs and a mutation control; exact outputs, exits and file effects | Passed 1/1; [scope](docs/verification/OWNED_RECONSTRUCTION.md) |
 | Previous accepted capability strict run | 595/595 tests across 72 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 9862b2d1-87c2-4cbf-a3b4-7216fe8bbaa5; 278 unchanged inputs |
 | Frozen actual transport | 18 cases/411 calls plus existing CLI annotation; preserved state/retry/source/cleanup; zero SDK notices | Passed; [scope](docs/verification/MCP_CANCELLATION.md) |
-| Local package and worker preparation | Fresh offline isolated CLI/MCP/native PTY installation; frozen sanitized Linux image with exactly two mounts and exact owned-container cleanup | Passed locally; activation pending; [guide](docs/operations/LOCAL_INSTALL.md) |
+| Local package and worker preparation | Current correction reruns the isolated package CLI/MCP/native PTY checks; the worker-image qualification belongs to the previous six-area delivery | Worker image is not rebuilt by this correction; client/live worker activation remains pending; [guide](docs/operations/LOCAL_INSTALL.md) |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build
@@ -56,9 +59,11 @@ accepted complete run above passed after those corrections.
 Owned process fixtures also require genuine completion before their semantic
 assertions: the comparison fixture uses a bounded 15-second window and explicit
 natural-exit checks, retaining all terminal bytes and unchanged/changed controls.
-Any additional cleanup-fixture wait correction is limited to its recorded source
-hash and proof in [the current scope](docs/verification/NAME_BATCH_VALIDATION.md).
-Product comparison and cleanup policies are unchanged.
+Those earlier cleanup-fixture wait corrections are limited to their recorded
+source hashes and proof in [the name-batch scope](docs/verification/NAME_BATCH_VALIDATION.md).
+That delivery left product cleanup behavior unchanged. The current Electron
+correction changes profile-removal retries and evidence publication as described
+in [its scope](docs/verification/ELECTRON_PROFILE_CLEANUP.md).
 
 ## Capability disposition
 

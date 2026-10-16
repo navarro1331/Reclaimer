@@ -15,6 +15,8 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Electron profile cleanup and evidence publication](verification/ELECTRON_PROFILE_CLEANUP.md)
+- [Managed custom-attribute Boolean values](verification/MANAGED_BOOLEAN_VALUES.md)
 - [Six-area implementation, owned proof and remaining reasons](verification/SIX_AREA_COMPLETION.md)
 
 - [Local capability completion and pending inputs](verification/CAPABILITY_COMPLETION.md)
