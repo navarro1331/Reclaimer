@@ -1,11 +1,11 @@
 # Reclaimer project status
 
 As of 2026-10-16, Reclaimer is an independently implemented local application,
-package version 0.2.0. Native address-name batches now validate every ordered
-address before changing the existing name map. The complete accepted suite passes
-with required native/Swift/runtime fixtures in the documented validation-only scope.
-The previous startup-recovery, unknown-ledger and bundle-import deliveries retain
-their recorded accepted scope.
+package version 0.2.0. Seven manual native annotation operations now prepare
+private draft maps and unpublished evidence before their validated synchronous
+commit. The complete accepted suite passes with required native/Swift/runtime
+fixtures in the documented annotation transaction scope. Previous name-batch,
+startup-recovery, unknown-ledger and bundle-import proofs retain their scope.
 Previous NativeAOT identity, Swift declaration and documentation proofs retain
 their recorded scope.
 The public branch history and fetched-remote receipt identify each published
@@ -32,7 +32,9 @@ revision.
 | Bounded startup recovery | Genuine LLDB lifecycle, Node readiness, Swift compiler/pipe and 15 budget cases; all 60 emitted symbols retained | Passed; [scope](docs/verification/STARTUP_RECOVERY.md) |
 | Previous startup-recovery strict run | 466/466 tests across 63 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Retained accepted run 466a7a6c-2424-4fa9-9573-b11024655358; 193 unchanged inputs |
 | Native address-name batch validation | Final 14 owned cases: baseline 8 failures and 6 passing controls; fixed combined focused checks 36/36; actual MCP retry/snapshot and existing CLI flow | Passed; [validation-only scope](docs/verification/NAME_BATCH_VALIDATION.md) |
-| Accepted current strict run | 480/480 tests across 64 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run d12f2b0d-3c85-4734-862d-dd60eae5be94; 194 unchanged inputs |
+| Previous name-batch strict run | 480/480 tests across 64 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Retained accepted run d12f2b0d-3c85-4734-862d-dd60eae5be94; 194 unchanged inputs |
+| Manual native annotation transaction | Final 52 owned baseline cases: 47 failures, 5 passing controls; combined focused 123/123; 18 actual transport cases and stock CLI annotation | Passed; [bounded scope](docs/verification/ANNOTATION_TRANSACTION.md) |
+| Accepted current strict run | 532/532 tests across 65 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 1c301034-1bc0-46e0-8296-2564834d9a9f; 197 unchanged inputs |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build
@@ -73,9 +75,11 @@ Product comparison and cleanup policies are unchanged.
 
 ## Pending and unestablished
 
-Later naming-wrapper evidence-publication failure/cancellation and general
-`annotate` rollback remain separate open branches. The name-batch fix guarantees
-validation before writes; it does not establish universal annotation atomicity.
+The later naming-wrapper and seven manual native annotation failure/cancellation
+branches are closed in the [owned transaction scope](docs/verification/ANNOTATION_TRANSACTION.md).
+General operation transactions, automatic NativeAOT names, navigation and native
+snapshot restoration keep their separate scopes. No universal atomicity or broad
+provider/resource guarantee is established.
 
 Mac-only Hopper, Apple assetutil, Apple SDK/runtime and Objective-C checks remain
 pending. Broader NativeAOT generic/layout/code-target recovery, broader Swift

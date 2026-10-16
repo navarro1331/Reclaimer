@@ -14,8 +14,7 @@ owned proof and documented limits satisfy the [completion contract](COMPLETION_C
 | Unknown-ledger mutation transaction | Closed in owned fixture scope | Prepare unpublished events, recheck retained state after await and commit event/revision together. Verify failure/cancellation/retry and competing Context writes. See [scope](docs/verification/UNKNOWN_MUTATION_TRANSACTION.md). |
 | Bounded startup and lifecycle recovery | Closed in owned fixture scope | Verify real provider replies, readiness, observation windows, physical exit and quotas without dropping compiler symbols. Full suite passes. See [scope](docs/verification/STARTUP_RECOVERY.md). |
 | Native address-name batch validation | Closed in owned validation scope | Parse every ordered address before name writes; prove late-invalid preservation, valid retry, compatibility and actual MCP/snapshot flow. See [scope](docs/verification/NAME_BATCH_VALIDATION.md). |
-| Naming wrapper evidence failure/cancellation | Open separate branch | Prove rollback or another explicit disposition when evidence publication fails or cancellation arrives after synchronous name writes; validation-only staging does not close this branch. |
-| General annotation rollback | Open separate branch | Define and prove `annotate` failure/rollback behavior independently of address-name batch parsing. |
+| Manual native annotation transaction | Closed in owned fixture scope | Stage four manual maps and unpublished evidence for seven operations; validate original caller cancellation, output and retained state before synchronous delta/evidence/history commit. Preserve failed attempts and independent successful writes. See [scope](docs/verification/ANNOTATION_TRANSACTION.md). |
 | Project documentation and decision records | Created and reviewed | Maintain the requested root documents, three ADRs, working links and evidence-backed status. |
 | Mac-only provider validation | Pending operator environment | Use owned artifacts on macOS with Hopper/Apple assetutil and the relevant Apple SDK/runtime. Record genuine provider output and platform limitations. |
 | Broader NativeAOT recovery | Open | Independently prove generic/parameterized associations, original instance layouts, optional/GC/dispatch structures and method code-target bindings before promoting them. |
@@ -51,9 +50,13 @@ cancellation and awaited-binding conflict cases. General operation transactions,
 resource/concurrency breadth and historical source authenticity remain separate
 scopes; the local Context race proof does not change MCP's serialized tool queue.
 
-The native name-batch gap is closed for complete ordered address validation
-before writes. Later wrapper evidence failure/cancellation and general `annotate`
-rollback remain open; pre-aborted Context checks do not establish later rollback.
+The native name-batch proof retains its validation-only historical scope. The
+subsequent manual annotation transaction closes the owned later evidence failure,
+cancellation and `annotate_native_function` dossier branches for seven operations.
+Controlled Context races preserve independent successful writes and reject stale
+conflicts. NativeAOT automatic naming, navigation, snapshot restore and general
+operation transactions retain their separate scopes. See the
+[annotation transaction report](docs/verification/ANNOTATION_TRANSACTION.md).
 
 Distribution licensing, packaged installation, hosted service operation and
 Mega worker/client activation each require their own defined scope. This roadmap

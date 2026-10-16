@@ -48,9 +48,20 @@ ledger and history. Successful replies keep original keys; canonical aliases
 keep ordered last-write-wins behavior. Empty batches, targetless-empty behavior,
 missing-session precedence, empty names, named spaces and ignored `document`
 retain their existing behavior. The [owned naming scope](../verification/NAME_BATCH_VALIDATION.md)
-records the validation-only fix and actual MCP/snapshot compatibility. Later
-wrapper evidence failure/cancellation and general `annotate` rollback remain
-separate open branches; this is not a universal annotation transaction.
+records the historical validation-only fix and actual MCP/snapshot compatibility.
+
+Seven manual native annotation operations now prepare request-local names,
+comments, inline comments and bookmarks and unpublished evidence. `Context.call`
+uses private WeakMap commit metadata after awaited preparation, original caller
+cancellation and output validation. The final synchronous section checks prepared
+reply content, session/model/map identity and touched-key conflicts, then commits
+only staged deltas and evidence before successful history append. Annotation
+dossiers also bind their wider name/comment read set. Independent successful
+keys, evidence and nested calls remain retained. The
+[owned annotation transaction scope](../verification/ANNOTATION_TRANSACTION.md)
+records failure/cancellation, retry, compatibility, controlled races, cold model
+ownership and actual transport proof. This covers the seven manual operations;
+automatic NativeAOT names, navigation and native snapshots keep separate scopes.
 
 The separate evidence-bundle importer stages records, unknown revisions and any
 historical integrity binding before committing. Retained-state checks are repeated

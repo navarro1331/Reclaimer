@@ -15,6 +15,7 @@ layout; existing detailed subsystem and verification documents remain here.
 
 ## Current verification scope
 
+- [Manual native annotation transaction](verification/ANNOTATION_TRANSACTION.md)
 - [Native address-name batch validation](verification/NAME_BATCH_VALIDATION.md)
 - [Bounded startup and readiness recovery](verification/STARTUP_RECOVERY.md)
 - [Transactional unknown-ledger mutations](verification/UNKNOWN_MUTATION_TRANSACTION.md)

@@ -36,10 +36,14 @@ An additional negative control extracts the final fixture helpers and selected t
 
 The external PTY sequence observes equal 88-byte alpha streams and a distinct 87-byte beta stream, natural code-zero exits and absent owned PIDs. It does not reconstruct the unavailable exact raw bytes of the original full-suite failure or establish a universal startup-time guarantee. Only correction rows bound to the accepted frozen fixture hashes are reported here.
 
-## Open branches and publication requirements
+## Historical open branches and publication requirements
 
 This is not a universal annotation transaction. A later wrapper evidence-publication failure or cancellation after synchronous name writes remains a separate open branch. General `annotate` rollback is also open. The pre-aborted Context control does not establish rollback for those later stages. Existing snapshot/import/unknown-ledger transaction proofs keep their separate scope.
 
 CLI/MCP contract hashes, package/lock selections and all **57 application notice hashes** remain unchanged. Publication requires a separately built and checked sanitized snapshot, a normal fast-forward child of the existing public parent, and fetched public commit/tree/blob verification. Snapshot counts and new commit IDs come from those later receipts. Private history, configuration, toolchains, generated outputs and raw receipts remain local. Reused dependencies do not establish a fresh installation audit.
 
 Mac-only Hopper, Apple assetutil, Apple SDK/runtime and Objective-C checks remain pending. Broader NativeAOT/Swift recovery, live-provider breadth and full REA behavioral parity remain unestablished. No global installation, worker/client activation or schedule change is part of this scope.
+
+## Later manual annotation transaction follow-up
+
+The accepted 480-test result and all validation-only proof above remain historical evidence for that delivery. Its later wrapper evidence failure/cancellation and general annotation rollback branches are now closed for the seven manual native operations in the separate [annotation transaction scope](ANNOTATION_TRANSACTION.md), accepted run 1c301034-1bc0-46e0-8296-2564834d9a9f. That follow-up stages manual maps and unpublished evidence, checks original caller cancellation and final output, and preserves independent successful writes. This addendum does not turn the earlier pre-aborted or malformed-address controls into proof of later rollback, and it makes no universal annotation atomicity claim. Mac checks and broader parity retain their stated limits.

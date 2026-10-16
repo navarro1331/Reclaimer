@@ -3,6 +3,31 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
+## Recorded native annotation transaction — 2026-10-16
+
+- Prepare names, comments, inline comments and bookmarks in request-local drafts
+  for seven manual operations; hold evidence unpublished until final validation.
+- Capture the original caller signal and transfer private commit metadata through
+  a WeakMap. Check final reply shape, prepared value, session/model/map identity,
+  touched keys and wider annotation dossier reads before synchronous commit.
+- Preserve complete prior maps, ledger and history on owned failure/cancellation,
+  and retain successful independent writes instead of restoring an old snapshot.
+- Bind cold provider model reads and closed-session resource ownership; preserve
+  nested `this.call` work through the original Context.
+- Reproduce 47 failures with 5 passing controls among
+  52 final owned baseline cases; combined focused checks 123/123.
+  Verify 18 actual MCP cases and the existing stock CLI annotation command.
+- Keep CLI/MCP contracts, package/lock and 57 notices unchanged. Automatic
+  NativeAOT names, navigation and native snapshot transactions keep their scope.
+
+Accepted run `1c301034-1bc0-46e0-8296-2564834d9a9f` passes **532/532 tests** across **65 files**,
+build and 139/139 operations, zero fail/skip/cancel/todo/timeout; 197 frozen
+inputs stayed unchanged. The previous 480-test name-batch delivery and its
+owned process-fixture corrections retain their historical proof. Mac checks remain
+pending; broader parity is unestablished. Publication still requires separately
+verified sanitized snapshot and fetched remote receipts. See
+[scope](docs/verification/ANNOTATION_TRANSACTION.md).
+
 ## Recorded native name-batch validation — 2026-10-16
 
 - Stage all ordered address parses before writing native names, preserving the
