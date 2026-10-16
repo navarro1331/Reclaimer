@@ -1,10 +1,11 @@
 # Reclaimer project status
 
-As of 2026-10-15, Reclaimer is an independently implemented local application,
-package version 0.2.0. The unknown-ledger mutation gap and the 22 failing startup,
-Swift and debugger checks are fixed in their documented owned-fixture scope.
-The complete suite passes with required native/Swift/runtime fixtures.
-Previous bundle-import delivery retains its accepted verification scope.
+As of 2026-10-16, Reclaimer is an independently implemented local application,
+package version 0.2.0. Native address-name batches now validate every ordered
+address before changing the existing name map. The complete accepted suite passes
+with required native/Swift/runtime fixtures in the documented validation-only scope.
+The previous startup-recovery, unknown-ledger and bundle-import deliveries retain
+their recorded accepted scope.
 Previous NativeAOT identity, Swift declaration and documentation proofs retain
 their recorded scope.
 The public branch history and fetched-remote receipt identify each published
@@ -29,7 +30,9 @@ revision.
 | Unknown-ledger mutation transaction | 14/14 owned cases; 45/45 combined focused checks; actual MCP failure/cancellation/retry for both mutations and stock CLI import | Passed; [scope](docs/verification/UNKNOWN_MUTATION_TRANSACTION.md) |
 | Earlier failed full regression | Build passed; 444/466 tests, 22 failures; 138/139 operations | Archived run 35d2e51e-691c-4ba7-b3ec-9d5d81f24cd9 and all 193 inputs retained |
 | Bounded startup recovery | Genuine LLDB lifecycle, Node readiness, Swift compiler/pipe and 15 budget cases; all 60 emitted symbols retained | Passed; [scope](docs/verification/STARTUP_RECOVERY.md) |
-| Accepted current strict run | 466/466 tests across 63 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run 466a7a6c-2424-4fa9-9573-b11024655358; 193 unchanged inputs |
+| Previous startup-recovery strict run | 466/466 tests across 63 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Retained accepted run 466a7a6c-2424-4fa9-9573-b11024655358; 193 unchanged inputs |
+| Native address-name batch validation | Final 14 owned cases: baseline 8 failures and 6 passing controls; fixed combined focused checks 36/36; actual MCP retry/snapshot and existing CLI flow | Passed; [validation-only scope](docs/verification/NAME_BATCH_VALIDATION.md) |
+| Accepted current strict run | 480/480 tests across 64 files; 139/139 operations; zero fail/skip/cancel/todo/timeout | Passed; run d12f2b0d-3c85-4734-862d-dd60eae5be94; 194 unchanged inputs |
 | Compatibility and notices | Two contract digests unchanged; all 57 application notice files retained | Verified and retained |
 
 The initial build attempt reached its syntax deadline. A later run passed build
@@ -44,6 +47,13 @@ bounded setup from observation. Substantive observation, quota and cleanup
 assertions remain required. See [startup recovery](docs/verification/STARTUP_RECOVERY.md). The generated-only NativeAOT
 expectation was replaced with explicit association and legacy-alias checks; the
 accepted complete run above passed after those corrections.
+
+Owned process fixtures also require genuine completion before their semantic
+assertions: the comparison fixture uses a bounded 15-second window and explicit
+natural-exit checks, retaining all terminal bytes and unchanged/changed controls.
+Any additional cleanup-fixture wait correction is limited to its recorded source
+hash and proof in [the current scope](docs/verification/NAME_BATCH_VALIDATION.md).
+Product comparison and cleanup policies are unchanged.
 
 ## Capability disposition
 
@@ -62,6 +72,10 @@ accepted complete run above passed after those corrections.
   establish their measured engineering scope, not legal clean-room certification.
 
 ## Pending and unestablished
+
+Later naming-wrapper evidence-publication failure/cancellation and general
+`annotate` rollback remain separate open branches. The name-batch fix guarantees
+validation before writes; it does not establish universal annotation atomicity.
 
 Mac-only Hopper, Apple assetutil, Apple SDK/runtime and Objective-C checks remain
 pending. Broader NativeAOT generic/layout/code-target recovery, broader Swift

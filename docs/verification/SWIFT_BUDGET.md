@@ -43,7 +43,7 @@ Each request owns its deadline controller and signal. The original Context signa
 | Actual owned child output | The remaining allowance produces a real ERR_CHILD_PROCESS_STDIO_MAXBUFFER error, mapped to capacity; recorded owned child PIDs are physically absent |
 | Actual CLI/MCP | CLI keeps its target/positional-symbol route and returns the existing resource error; an unmodified official MCP SDK receives the same error and an empty retained evidence bundle |
 
-The injected packet cases test decisions; they do not claim real Swift provider execution. The final identity case tests both delayed success and delayed rejection after expiry. Cleanup is registered immediately after creating each owned fixture folder. The actual process cases run the independently authored [Node child fixture](../../test/fixtures/swift-budget-child.mjs), not a vendor tool. [swift-budget.test.mjs](../../test/swift-budget.test.mjs) records all fifteen cases and verifies source preservation. The separate existing [Swift proof](SWIFT_COVERAGE.md) runs the actual compiler and demangler under the new default budget.
+The injected packet cases test decisions; they do not claim real Swift provider execution. The final identity case tests both delayed success and delayed rejection after expiry. Cleanup is registered immediately after creating each owned fixture folder. The actual process cases run the independently authored [Node child fixture](../../test/fixtures/swift-budget-child.mjs), not a vendor tool. [swift-budget.test.mjs](../../test/swift-budget.test.mjs) records all fifteen cases and verifies source preservation. The separate existing Swift proof (raw receipt retained locally) runs the actual compiler and demangler under the new default budget.
 
 ## Remaining scope
 

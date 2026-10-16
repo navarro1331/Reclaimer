@@ -41,6 +41,17 @@ identical records remain in place. Malformed input and late cancellation leave
 the prior context unchanged. Snapshots do not transfer the complete unknown ledger.
 See the [owned transaction scope](../verification/NATIVE_SNAPSHOT_TRANSACTION.md).
 
+`set_addresses_names` stages every original key, parsed address and name in
+`Object.entries` order before any write to the existing name map. A malformed
+later address preserves the source, target/session, all prior annotation maps,
+ledger and history. Successful replies keep original keys; canonical aliases
+keep ordered last-write-wins behavior. Empty batches, targetless-empty behavior,
+missing-session precedence, empty names, named spaces and ignored `document`
+retain their existing behavior. The [owned naming scope](../verification/NAME_BATCH_VALIDATION.md)
+records the validation-only fix and actual MCP/snapshot compatibility. Later
+wrapper evidence failure/cancellation and general `annotate` rollback remain
+separate open branches; this is not a universal annotation transaction.
+
 The separate evidence-bundle importer stages records, unknown revisions and any
 historical integrity binding before committing. Retained-state checks are repeated
 after awaited binding preparation; failed/cancelled preparation preserves prior
@@ -119,9 +130,9 @@ member dylib resolution, rich plist/keyed records, archive security limits,
 PE32+/managed resources/generic CIL, DEX references/multidex and binary manifests.
 They exposed genuine bounds, signed-value, wire-format and nullable-p-code defects
 that were corrected. These are specific observations, not universal format parity;
-see the [artifact scope](../verification/ARTIFACT_PARITY.md),
-[native scope](../verification/NATIVE_PARITY.md) and
-[current parity report](../verification/PARITY_CLOSURE.md).
+see the artifact scope (raw receipt retained locally),
+native scope (raw receipt retained locally) and
+current parity report (raw receipt retained locally).
 
 For a direct Java launcher, use an existing JDK executable, the Ghidra
 `Utility.jar` classpath, `-Djava.system.class.loader=ghidra.GhidraClassLoader`,
@@ -136,14 +147,14 @@ explicit operator configuration.
 Optional format tools use `swiftDemangle`, `assetutilArgv`, and `jadxArgv`
 (`REAL_JADX_ARGV` is a JSON array). Missing tools produce named prerequisite errors.
 Swift demangling uses one explicit `swiftDemangle` executable path (or
-`REAL_SWIFT_DEMANGLE`), a captured version query and separate argv invocations for
-each literal symbol. Option-like symbols follow `--`; @-prefixed arguments reject
-before provider/file access because LLVM response-file expansion occurs before
-option parsing. The route therefore does not support @-prefixed macro symbols.
+`REAL_SWIFT_DEMANGLE`) and a captured version query. Ordinary symbols use separate
+literal argv invocations after `--`. @-prefixed symbols use a bounded, closed stdin
+pipe to `swift-demangle --compact`; their bytes never become response-file names.
+See the [owned literal-input proof](../verification/SWIFT_STDIN.md).
 Actual argv, exit, captured byte counts and before/after executable hashes are
 retained. An unchanged echo does not classify a name as valid or invalid Swift.
 Cancellation, inconsistent output and executable changes retain no partial batch.
-The [owned Swift proof](../verification/SWIFT_COVERAGE.md) distinguishes the actual
+The owned Swift proof (raw receipt retained locally) distinguishes the actual
 compiler release from the demangler's reported LLVM version and bounds its claims.
 Swift batches have default ceilings of 1,024 symbols, 1 MiB of UTF-8 symbol input,
 16 MiB of combined captured provider stdout/stderr and a 120-second monotonic

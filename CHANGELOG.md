@@ -3,6 +3,30 @@
 Entries record changes supported by the retained delivery reports. The package
 version is currently 0.2.0.
 
+## Recorded native name-batch validation — 2026-10-16
+
+- Stage all ordered address parses before writing native names, preserving the
+  existing map, original reply keys and alias order. A later malformed address
+  leaves source bytes, prior maps, ledger and history unchanged; valid retry works.
+- Reproduce 8 failures and 6 passing controls in the final 14-case owned baseline.
+  Fixed combined focused checks pass 36/36 without provider or target execution.
+- Verify actual MCP malformed-batch errors, complete prior-bundle preservation,
+  valid retry and native snapshot close/restore, plus the existing CLI selected-
+  artifact snapshot flow. There is no CLI batch-name command.
+- Require genuine completion in owned PTY comparison/cleanup fixtures before
+  semantic and physical-exit assertions; keep finite waits, terminal bytes and
+  unchanged/changed expectations. Product comparison and cleanup policy stay intact.
+- Retain targetless empty batches, missing-session precedence, ignored `document`,
+  empty names, named spaces, aliases and all unchanged contracts/package/notices.
+
+Accepted run `d12f2b0d-3c85-4734-862d-dd60eae5be94` passes **480/480 tests** across **64 files**,
+build and 139/139 operations, zero fail/skip/cancel/todo/timeout; 194 frozen
+inputs stayed unchanged. Previous accepted 466/466 startup proof retains its scope.
+Later wrapper evidence failure/cancellation and general `annotate` rollback remain
+open. Mac checks remain pending; broader parity is unestablished. Publication still
+requires separate sanitized-snapshot and fetched remote receipts. See
+[scope](docs/verification/NAME_BATCH_VALIDATION.md).
+
 ## Recorded startup recovery and unknown-ledger mutation update — 2026-10-15
 
 - Prepare unpublished mutation evidence, recheck retained state after await and

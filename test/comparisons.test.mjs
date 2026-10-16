@@ -43,10 +43,12 @@ test('structural verification binds both retained source records and the selecte
   ctx.ledger.delete(left.evidence_id);await assert.rejects(()=>ctx.call('verify_reconstruction',{specification:{name:'Missing retained source',claims:[claim('structural-function','pseudocode',comparison)]}}),/retained/);
 });
 test('genuine PTY terminal comparison permits narrow verification without asserting whole-process equivalence',async t=> {
-  const root=await temporary(t),script=path.join(root,'fresh-process.cjs');await fs.writeFile(script,'console.log("fresh alpha");');const ctx=context({temporaryDirectory:root}),args={executable:process.execPath,arguments:[script],working_directory:root,environment:{},filesystem_observation_paths:[],timeout_ms:5000,settle_ms:10};
-  const left=await ctx.call('capture_process_scenario',args),right=await ctx.call('capture_process_scenario',args),same=await ctx.call('compare_process_captures',{left,right});assert.equal(same.normalized_result.terminal,'unchanged');assert.equal(same.normalized_result.process,'unknown');
+  const root=await temporary(t),script=path.join(root,'fresh-process.cjs');await fs.writeFile(script,'console.log("fresh alpha");');const ctx=context({temporaryDirectory:root}),args={executable:process.execPath,arguments:[script],working_directory:root,environment:{},filesystem_observation_paths:[],timeout_ms:15000,settle_ms:10};
+  const naturalExit=(capture,payload)=>{assert.equal(capture.normalized_result.exit.code,0);assert.equal(capture.normalized_result.exit.reason,'exited');assert.equal(capture.normalized_result.exit.signal,null);assert.ok(capture.normalized_result.frames.map(frame=>frame.data).join('').includes(payload));};
+  const left=await ctx.call('capture_process_scenario',args),right=await ctx.call('capture_process_scenario',args);naturalExit(left,'fresh alpha');naturalExit(right,'fresh alpha');
+  const same=await ctx.call('compare_process_captures',{left,right});assert.equal(same.normalized_result.terminal,'unchanged');assert.equal(same.normalized_result.process,'unknown');
   const narrow=await ctx.call('verify_reconstruction',{specification:{name:'Fresh terminal only',claims:[claim('behavioral','terminal',same)]}});assert.equal(narrow.normalized_result.status,'pass');
-  await fs.writeFile(script,'console.log("fresh beta");');const changedCapture=await ctx.call('capture_process_scenario',args),changed=await ctx.call('compare_process_captures',{left,right:changedCapture});assert.equal(changed.normalized_result.terminal,'changed');
+  await fs.writeFile(script,'console.log("fresh beta");');const changedCapture=await ctx.call('capture_process_scenario',args);naturalExit(changedCapture,'fresh beta');const changed=await ctx.call('compare_process_captures',{left,right:changedCapture});assert.equal(changed.normalized_result.terminal,'changed');
   const failed=await ctx.call('verify_reconstruction',{specification:{name:'Changed terminal',claims:[claim('behavioral','terminal',changed)]}});assert.equal(failed.normalized_result.status,'fail');
 });
 test('static-runtime correlation reads the actual process wire dimension and remains a hypothesis',async()=> {
